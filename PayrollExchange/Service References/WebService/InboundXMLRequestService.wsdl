@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:intf="http://soap.service.ngatest.com" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:impl="http://soap.service.ngatest.com" targetNamespace="http://soap.service.ngatest.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://soap.service.ngatest.com">
+      <xsd:element name="request">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="username" type="xsd:string" />
+            <xsd:element name="password" type="xsd:string" />
+            <xsd:element name="requestXML" type="xsd:base64Binary" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="requestResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="requestReturn" type="xsd:base64Binary" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="noop">
+        <xsd:complexType />
+      </xsd:element>
+      <xsd:element name="noopResponse">
+        <xsd:complexType />
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="noopResponse">
+    <wsdl:part name="parameters" element="impl:noopResponse" />
+  </wsdl:message>
+  <wsdl:message name="requestResponse">
+    <wsdl:part name="parameters" element="impl:requestResponse" />
+  </wsdl:message>
+  <wsdl:message name="noopRequest">
+    <wsdl:part name="parameters" element="impl:noop" />
+  </wsdl:message>
+  <wsdl:message name="requestRequest">
+    <wsdl:part name="parameters" element="impl:request" />
+  </wsdl:message>
+  <wsdl:portType name="InboundXMLRequestServicePortType">
+    <wsdl:operation name="request">
+      <wsdl:input name="requestRequest" message="impl:requestRequest" />
+      <wsdl:output name="requestResponse" message="impl:requestResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="noop">
+      <wsdl:input name="noopRequest" message="impl:noopRequest" />
+      <wsdl:output name="noopResponse" message="impl:noopResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="InboundXMLRequestServiceBinding" type="impl:InboundXMLRequestServicePortType">
+    <wsdlsoap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="request">
+      <wsdlsoap:operation soapAction="request" />
+      <wsdl:input name="requestRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="requestResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="noop">
+      <wsdlsoap:operation soapAction="noop" />
+      <wsdl:input name="noopRequest">
+        <wsdlsoap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="noopResponse">
+        <wsdlsoap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="InboundXMLRequestServiceService">
+    <wsdl:port name="InboundXMLRequestServicePort" binding="impl:InboundXMLRequestServiceBinding">
+      <wsdlsoap:address location="http://10.180.2.219:8081/cgi-bin/jsmdirect?PEIREQUEST" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

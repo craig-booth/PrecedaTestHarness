@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PayrollExchange", "PayrollExchange\PayrollExchange.csproj", "{8AB6BAF6-0FF2-4E39-AC12-A13643C57057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{B6778CCD-5AD2-446E-8272-2850EBB8D19A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHarness", "TestHarness\TestHarness.csproj", "{494DBA5D-5FE6-4536-BD1A-8D1341A3AE08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper", "Mapper\Mapper.csproj", "{E51B367E-0E15-4659-95DB-253FC01689EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AB6BAF6-0FF2-4E39-AC12-A13643C57057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AB6BAF6-0FF2-4E39-AC12-A13643C57057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AB6BAF6-0FF2-4E39-AC12-A13643C57057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AB6BAF6-0FF2-4E39-AC12-A13643C57057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6778CCD-5AD2-446E-8272-2850EBB8D19A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6778CCD-5AD2-446E-8272-2850EBB8D19A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6778CCD-5AD2-446E-8272-2850EBB8D19A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6778CCD-5AD2-446E-8272-2850EBB8D19A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{494DBA5D-5FE6-4536-BD1A-8D1341A3AE08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{494DBA5D-5FE6-4536-BD1A-8D1341A3AE08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{494DBA5D-5FE6-4536-BD1A-8D1341A3AE08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{494DBA5D-5FE6-4536-BD1A-8D1341A3AE08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E51B367E-0E15-4659-95DB-253FC01689EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E51B367E-0E15-4659-95DB-253FC01689EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E51B367E-0E15-4659-95DB-253FC01689EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E51B367E-0E15-4659-95DB-253FC01689EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
