@@ -98,10 +98,6 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PayrollExchange\PayrollExchange.csproj">
-      <Project>{8ab6baf6-0ff2-4e39-ac12-a13643c57057}</Project>
-      <Name>PayrollExchange</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TestHarness\TestHarness.csproj">
       <Project>{494dba5d-5fe6-4536-bd1a-8d1341a3ae08}</Project>
       <Name>TestHarness</Name>

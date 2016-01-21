@@ -12,7 +12,6 @@ using System.IO;
 
 using CsvHelper;
 
-using PayrollExchange;
 using TestHarness;
 
 namespace TestRunner
