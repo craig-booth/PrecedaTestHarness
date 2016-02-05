@@ -75,16 +75,11 @@ namespace TestHarness
                 Result =  TaskResult.InProgress;
                 Message = "";
 
-                /* Do any replacement needed */
-                var sqlStatement = SQLStatement;
-                foreach (var variable in variables)
-                    sqlStatement = sqlStatement.Replace("%" + variable.Key + "%", variable.Value);
-
                 SQLQuery sqlQuery = new SQLQuery(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
                 if (RunMode == SQLRunMode.Execute)
                 {
 
-                    var successfull = await sqlQuery.Execute(sqlStatement);
+                    var successfull = await sqlQuery.Execute(SQLStatement);
 
                     Result = TaskResult.Passed;
                     return true;
@@ -97,7 +92,7 @@ namespace TestHarness
                         DataFileName = Path.Combine(outputFolder, "data.csv")
                     };
 
-                    var successfull = await sqlQuery.RunQuery(sqlStatement, ActualResult.DataFileName);
+                    var successfull = await sqlQuery.RunQuery(SQLStatement, ActualResult.DataFileName);
 
                     // Output results
                     if (successfull)
@@ -153,6 +148,7 @@ namespace TestHarness
             connectionStringBuilder["Data Source"] = Server;
             connectionStringBuilder["User Id"] = User;
             connectionStringBuilder["Password"] = Password;
+            connectionStringBuilder["Naming Convention"] = 1;  // System naming
             connectionStringBuilder["Library List"] = FileLibrary + ",PRECLP15,PRECPP15,QGPL,QTEMP"; 
             _ConnectionString = connectionStringBuilder.ConnectionString;
         }
