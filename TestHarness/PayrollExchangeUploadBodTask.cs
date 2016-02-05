@@ -47,6 +47,16 @@ namespace TestHarness
 
     public class PayrollExchangeUploadBodTask : ITask
     {
+        public string Description
+        {
+            get
+            {
+                return "Payroll Exchange Upload";
+            }
+        }
+        public string Message { get; private set; }
+        public TaskResult Result { get; }
+
         public string FileName { get; private set; }
         public PayrollExchangeUploadBodTaskResult ExpectedResult;
         public PayrollExchangeUploadBodTaskResult ActualResult;
@@ -73,8 +83,10 @@ namespace TestHarness
         }
 
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, StringWriter output, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken)
         {
+            StringWriter output = new StringWriter();
+
             var bod = new PayrollExchangeBod(FileName);
 
             BodId = bod.Id;
@@ -129,6 +141,11 @@ namespace TestHarness
                 return true;
             else
                 return false;           
+
+        }
+
+        public void ViewResult()
+        {
 
         }
     }

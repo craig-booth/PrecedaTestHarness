@@ -19,30 +19,7 @@ namespace TestHarness
 
         public bool Equals(SQLTaskResult value)
         {
-          
-            var file1 = new StreamReader(DataFileName);
-            var file2 = new StreamReader(value.DataFileName);
-
-            var line1 = file1.ReadLine();
-            var line2 = file2.ReadLine();
-            while (line1 != null)
-            {
-                if (line1 != line2)
-                {
-                    file1.Close();
-                    file2.Close();
-                    return false;
-                }
-
-                line1 = file1.ReadLine();
-                line2 = file2.ReadLine();
-            }
-
-            if (line2 == null)
-                return true;
-            else
-                return false;
-
+            return FileComparer.Compare(DataFileName, value.DataFileName);       
         }
     }
 
@@ -50,13 +27,29 @@ namespace TestHarness
 
     public class SQLTask : ITask
     {
+        public string Description
+        {
+            get
+            {
+                if (RunMode == SQLRunMode.Query)
+                    return "Execute SQL query";
+                else
+                    return "Execute SQL statement";
+            }
+        }
+        public string Message { get; private set; }
+        public TaskResult Result { get; private set; }
+
         public string SQLStatement { get; private set; }
-        public SQLRunMode RunMode {get; private set; }
+        public SQLRunMode RunMode { get; private set; }
         public SQLTaskResult ExpectedResult;
         public SQLTaskResult ActualResult;
 
         public SQLTask(XmlNode xml, string directory)
         {
+            Message = "";
+            Result = TaskResult.NotRun;
+
             SQLStatement = xml.SelectSingleNode("statement").InnerText;
             RunMode = SQLRunMode.Execute;
 
@@ -70,58 +63,71 @@ namespace TestHarness
                 if (dataNode != null)
                 {
                     RunMode = SQLRunMode.Query;
-                    ExpectedResult.DataFileName = Path.Combine(directory, dataNode.Attributes["file"].Value);                    
+                    ExpectedResult.DataFileName = Path.Combine(directory, dataNode.Attributes["file"].Value);
                 }
-            }                                 
+            }
         }
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, StringWriter output, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken)
+        {
+            try
+            {
+                Result =  TaskResult.InProgress;
+                Message = "";
+
+                /* Do any replacement needed */
+                var sqlStatement = SQLStatement;
+                foreach (var variable in variables)
+                    sqlStatement = sqlStatement.Replace("%" + variable.Key + "%", variable.Value);
+
+                SQLQuery sqlQuery = new SQLQuery(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
+                if (RunMode == SQLRunMode.Execute)
+                {
+
+                    var successfull = await sqlQuery.Execute(sqlStatement);
+
+                    Result = TaskResult.Passed;
+                    return true;
+
+                }
+                else if (RunMode == SQLRunMode.Query)
+                {
+                    ActualResult = new SQLTaskResult()
+                    {
+                        DataFileName = Path.Combine(outputFolder, "data.csv")
+                    };
+
+                    var successfull = await sqlQuery.RunQuery(sqlStatement, ActualResult.DataFileName);
+
+                    // Output results
+                    if (successfull)
+                    {
+                        if (ExpectedResult.Equals(ActualResult))
+                            Result = TaskResult.Passed;
+                        else
+                        {
+                            Message = "Result did not match expected result";
+                            Result = TaskResult.Failed;
+                        }
+                    }
+                    else
+                        Result = TaskResult.Failed;
+
+                }
+
+                return (Result == TaskResult.Passed);
+            }
+            catch (Exception e)
+            {
+                Result = TaskResult.ExceptionOccurred;
+                Message = "An exception occurred: " + e.Message;                
+                return false;
+            }
+        }
+
+        public void ViewResult()
         {
 
-            /* Do any replacement needed */
-            var sqlStatement = SQLStatement;
-            foreach (var variable in variables)
-                sqlStatement = sqlStatement.Replace("%" + variable.Key + "%", variable.Value);
-
-            output.WriteLine("Executing SQL {0}", sqlStatement);
-
-            SQLQuery sqlQuery = new SQLQuery(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
-            if (RunMode == SQLRunMode.Execute)
-            {
-
-                var successfull = await sqlQuery.Execute(sqlStatement);
-
-                // Output results
-                if (successfull)
-                    output.WriteLine("SQL successfully completed");
-                else
-                    output.WriteLine("SQL failed");
-
-                return true;
-   
-            }
-            else if (RunMode == SQLRunMode.Query)
-            {
-                ActualResult = new SQLTaskResult()
-                {
-                    DataFileName = Path.Combine(outputFolder, "data.csv")
-                };
-
-                var successfull = await sqlQuery.RunQuery(sqlStatement, ActualResult.DataFileName);
-
-                // Output results
-                if (successfull)
-                    output.WriteLine("SQL successfully completed");
-                else
-                    output.WriteLine("SQL failed");
-
-                if (ExpectedResult.Equals(ActualResult))
-                    return true;
-                else
-                    return false;
-            }
-
-            return false;
         }
     }
 

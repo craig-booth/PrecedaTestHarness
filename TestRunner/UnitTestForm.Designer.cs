@@ -28,6 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Setup", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Test", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Tear Down", System.Windows.Forms.HorizontalAlignment.Left);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UnitTestForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
@@ -36,9 +41,12 @@
             this.lblTestType = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.lblResult = new System.Windows.Forms.Label();
-            this.txtTestOutput = new System.Windows.Forms.TextBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.btnRun = new System.Windows.Forms.Button();
+            this.lsvUnitTest = new System.Windows.Forms.ListView();
+            this.colTask = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -113,19 +121,6 @@
             this.lblResult.TabIndex = 7;
             this.lblResult.Text = "label8";
             // 
-            // txtTestOutput
-            // 
-            this.txtTestOutput.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTestOutput.Location = new System.Drawing.Point(1, 124);
-            this.txtTestOutput.Multiline = true;
-            this.txtTestOutput.Name = "txtTestOutput";
-            this.txtTestOutput.ReadOnly = true;
-            this.txtTestOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtTestOutput.Size = new System.Drawing.Size(818, 311);
-            this.txtTestOutput.TabIndex = 8;
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Location = new System.Drawing.Point(433, 95);
@@ -146,14 +141,58 @@
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 
+            // lsvUnitTest
+            // 
+            this.lsvUnitTest.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colTask,
+            this.colMessage});
+            this.lsvUnitTest.FullRowSelect = true;
+            listViewGroup1.Header = "Setup";
+            listViewGroup1.Name = "lvgSetup";
+            listViewGroup2.Header = "Test";
+            listViewGroup2.Name = "lvgTest";
+            listViewGroup3.Header = "Tear Down";
+            listViewGroup3.Name = "lvgTearDown";
+            this.lsvUnitTest.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3});
+            this.lsvUnitTest.Location = new System.Drawing.Point(0, 124);
+            this.lsvUnitTest.Name = "lsvUnitTest";
+            this.lsvUnitTest.ShowItemToolTips = true;
+            this.lsvUnitTest.Size = new System.Drawing.Size(818, 310);
+            this.lsvUnitTest.SmallImageList = this.imageList1;
+            this.lsvUnitTest.TabIndex = 11;
+            this.lsvUnitTest.UseCompatibleStateImageBehavior = false;
+            this.lsvUnitTest.View = System.Windows.Forms.View.Details;
+            this.lsvUnitTest.DoubleClick += new System.EventHandler(this.lsvUnitTest_DoubleClick);
+            // 
+            // colTask
+            // 
+            this.colTask.Text = "Task";
+            this.colTask.Width = 156;
+            // 
+            // colMessage
+            // 
+            this.colMessage.Text = "Message";
+            this.colMessage.Width = 648;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "Failed");
+            this.imageList1.Images.SetKeyName(1, "SetupFailed");
+            this.imageList1.Images.SetKeyName(2, "Success");
+            // 
             // UnitTestForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(817, 435);
+            this.Controls.Add(this.lsvUnitTest);
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.btnRefresh);
-            this.Controls.Add(this.txtTestOutput);
             this.Controls.Add(this.lblResult);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.lblTestType);
@@ -179,8 +218,11 @@
         private System.Windows.Forms.Label lblTestType;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label lblResult;
-        private System.Windows.Forms.TextBox txtTestOutput;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.ListView lsvUnitTest;
+        private System.Windows.Forms.ColumnHeader colTask;
+        private System.Windows.Forms.ColumnHeader colMessage;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

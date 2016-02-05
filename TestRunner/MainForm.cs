@@ -21,9 +21,14 @@ namespace TestRunner
         private CancellationTokenSource _CancellationTokenSource;
         private TestSuite _TestSuite;
 
+        private string _OutputFolder;
+
         public MainForm()
         {
             InitializeComponent();
+
+            _OutputFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PrecedaTestHarness");
+            Directory.CreateDirectory(_OutputFolder);
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -62,20 +67,21 @@ namespace TestRunner
             foreach (ListViewItem item in lsvTests.Items)
                 item.SubItems[3].Text = "";
 
-
             var variables = new Dictionary<string, string>();            
             variables["SERVER"] = txtServer.Text;
             variables["FILELIBRARY"] = txtFileLibrary.Text;
             variables["USER"] = txtUser.Text;
-            variables["PASSWORD"] = txtPassword.Text;           
+            variables["PASSWORD"] = txtPassword.Text;
 
-            _CancellationTokenSource = new CancellationTokenSource();
-
+            _CancellationTokenSource = new CancellationTokenSource();        
             Progress<TestRunProgress> progress = new Progress<TestRunProgress>(OnTestRunProgress);
          
             try
             {
-                var result = await _TestSuite.RunAllAsync(variables, _CancellationTokenSource.Token, progress);
+                var outputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                Directory.CreateDirectory(outputFolder);
+
+                var result = await _TestSuite.RunAllAsync(variables, outputFolder, _CancellationTokenSource.Token, progress);
             }
             catch (OperationCanceledException)
             {
@@ -203,6 +209,10 @@ namespace TestRunner
             }        
         }
 
+        private void btnRunSelected_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Not supported");
+        }
     }
 
     class TestOutputRecord

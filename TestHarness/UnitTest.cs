@@ -14,15 +14,9 @@ namespace TestHarness
     public enum TestType { Positive, Negative };
     public enum TestResult { NotRun, InProgress, SetupFailed, Passed, Failed };
 
-    public interface ITask
-    {
-        Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, StringWriter output, CancellationToken cancellationToken);
-    }
-
     public class UnitTestProgress
     {
-        public TestResult Result { get; set; }
-        public string Output { get; set; }
+        public TestResult Result { get; set; }    
     }
 
     public class UnitTest
@@ -36,13 +30,11 @@ namespace TestHarness
         public List<ITask> TearDownTasks { get; private set; }
 
         public TestResult Result { get; private set; }
-        public string Output { get; private set; }
 
         public UnitTest()
         {
             TestType = TestType.Positive;
             Result = TestResult.NotRun;
-            Output = "";
 
             SetupTasks = new List<ITask>();
             TestTasks = new List<ITask>();
@@ -113,18 +105,14 @@ namespace TestHarness
 
         public async Task<TestResult> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<UnitTestProgress> progress)
         {
-            var stringWriter = new StringWriter();
             bool testSuccessful;
 
             Result = TestResult.InProgress;
-            Output = "";
             
             var unitTestProgress = new UnitTestProgress();
             if (progress != null)
             {                
                 unitTestProgress.Result = Result;
-                unitTestProgress.Output = Output;
-
                 progress.Report(unitTestProgress);
             }
 
@@ -133,57 +121,56 @@ namespace TestHarness
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, stringWriter, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
                 }
                 catch (Exception e)
                 {
-                    stringWriter.WriteLine("An exception occurred: " + e.Message);
                     testSuccessful = false;
                 }
                 if (!testSuccessful)
                 {
                     Result = TestResult.SetupFailed;
-                    stringWriter.WriteLine("Task Failed");
-                    Output = stringWriter.ToString();
-
                     return Result;
                 }
 
                 if (progress != null)
                 {
                     unitTestProgress.Result = TestResult.InProgress;
-                    unitTestProgress.Output = stringWriter.ToString();
 
                     progress.Report(unitTestProgress);
                 }
             }
 
             // Run Test tasks
+            Result = TestResult.Passed;
             foreach (ITask task in TestTasks)
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, stringWriter, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
                 }
                 catch (Exception e)
                 {
-                    stringWriter.WriteLine("An exception occurred: " + e.Message);
                     testSuccessful = false;
                 }
-                if (testSuccessful)
-                {
-                    Result = TestResult.Passed;
-                    stringWriter.WriteLine("Task Passed");
-                    Output = stringWriter.ToString();
-                }
-                else
+                if (!testSuccessful)                
                 {
                     Result = TestResult.Failed;
-                    stringWriter.WriteLine("Task Failed");
-                    Output = stringWriter.ToString();
                     break;
                 }
-                             
+                if (progress != null)
+                {
+                    unitTestProgress.Result = TestResult.InProgress;
+
+                    progress.Report(unitTestProgress);
+                }                     
+            }
+
+            if (progress != null)
+            {
+                unitTestProgress.Result = TestResult.InProgress;
+
+                progress.Report(unitTestProgress);
             }
 
             // Run teardown tasks
@@ -191,24 +178,16 @@ namespace TestHarness
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, stringWriter, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
                 }
                 catch (Exception e)
                 {
-                    stringWriter.WriteLine("An exception occurred: " + e.Message);
                     testSuccessful = false;
-                }
-                if (!testSuccessful)
-                {
-                    stringWriter.WriteLine("Task Failed");
-                    Output = stringWriter.ToString();
                 }
 
                 if (progress != null)
                 {
                     unitTestProgress.Result = TestResult.InProgress;
-                    unitTestProgress.Output = stringWriter.ToString();
-
                     progress.Report(unitTestProgress);
                 }
             }

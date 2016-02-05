@@ -33,7 +33,6 @@ namespace TestHarness
         public RunMode RunMode { get; private set; }
         public int NumberOfThreads { get; private set; }
         public List<UnitTest> UnitTests { get; private set; }
-        public string OutputFolder { get; private set; }
 
         public TestSuite()
         {
@@ -44,9 +43,6 @@ namespace TestHarness
             : this()
         {
             var directory = Path.GetDirectoryName(fileName);
-
-            OutputFolder = Path.Combine(directory, "Test Results");
-            Directory.CreateDirectory(OutputFolder);
 
             var xml = new XmlDocument();
             xml.Load(fileName);
@@ -100,10 +96,10 @@ namespace TestHarness
             return testResult;
         }
 
-        public async Task<TestRunResult> RunAllAsync(Dictionary<string, string> variables, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
+        public async Task<TestRunResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
         {
 
-            var testRunOutputFolder = Path.Combine(OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            var testRunOutputFolder = Path.Combine(outputFolder, "Test Run " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
             Directory.CreateDirectory(testRunOutputFolder);
 
             TestRunResult result = new TestRunResult();

@@ -54,6 +54,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.lblTestsNotRun = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
+            this.btnRunSelected = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnRunAll
@@ -119,7 +120,7 @@
             // btnStop
             // 
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(396, 82);
+            this.btnStop.Location = new System.Drawing.Point(802, 82);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 6;
@@ -293,11 +294,23 @@
             this.label12.TabIndex = 20;
             this.label12.Text = "Not Run";
             // 
+            // btnRunSelected
+            // 
+            this.btnRunSelected.Enabled = false;
+            this.btnRunSelected.Location = new System.Drawing.Point(396, 82);
+            this.btnRunSelected.Name = "btnRunSelected";
+            this.btnRunSelected.Size = new System.Drawing.Size(94, 23);
+            this.btnRunSelected.TabIndex = 22;
+            this.btnRunSelected.Text = "Run Selected";
+            this.btnRunSelected.UseVisualStyleBackColor = true;
+            this.btnRunSelected.Click += new System.EventHandler(this.btnRunSelected_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1018, 422);
+            this.Controls.Add(this.btnRunSelected);
             this.Controls.Add(this.lblTestsNotRun);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.lblTestsFailed);
@@ -355,6 +368,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label lblTestsNotRun;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button btnRunSelected;
     }
 }
 

@@ -11,6 +11,7 @@ using System.Xml;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+using CsvHelper;
 
 namespace Mapper
 {
@@ -24,8 +25,7 @@ namespace Mapper
         public int RecordsFailed { get; set; }
         public int RecordsTotal { get; set; }
 
-        public MapperRecordErrors Errors { get; private set; }
-
+        public string ErrorFile { get; set; }
 
         public MapperUploadResult()
         {
@@ -34,107 +34,7 @@ namespace Mapper
             RecordsDeleted = 0;
             RecordsFailed = 0;
             RecordsTotal = 0;
-
-            Errors = new MapperRecordErrors();
-        }
-    }
-
-    public class MapperRecordErrors : IEnumerable<MapperRecordError>
-    {
-        private Dictionary<int, MapperRecordError> _Errors;
-
-        public MapperRecordErrors()
-        {
-            _Errors = new Dictionary<int, MapperRecordError>();
-        }
-
-        public MapperRecordError this[int record]
-        {
-            get
-            {
-                return _Errors[record];
-            }
-        }
-
-        public bool ContainsRecord(int record)
-        {
-            return _Errors.ContainsKey(record);
-        }
-
-        public int RecordCount
-        {
-            get
-            {
-                return _Errors.Count();
-            }
-        }
-
-        public IEnumerator<MapperRecordError> GetEnumerator()
-        {
-            foreach (var recordError in _Errors.Values)
-            {
-                yield return recordError;
-            }
-        }
-
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void AddError(int record, string error)
-        {
-            MapperRecordError recordError;
-
-            if (_Errors.ContainsKey(record))
-                recordError = _Errors[record];
-            else
-            {
-                recordError = new MapperRecordError(record);
-                _Errors.Add(record, recordError);
-            }
-            recordError.AddErrorMessage(error);
-        }
-
-        public void AddErrors(int record, IEnumerable<string> errors)
-        {
-            MapperRecordError recordError;
-
-            if (_Errors.ContainsKey(record))
-                recordError = _Errors[record];
-            else
-            {
-                recordError = new MapperRecordError(record);
-                _Errors.Add(record, recordError);
-            }
-            recordError.AddErrorMessages(errors);
-        }
-    }
-
-    public class MapperRecordError
-    {
-        public int RecordNumber { get; set; }
-
-        private List<string> _Errors;
-        public IReadOnlyCollection<string> Errors
-        {
-            get { return _Errors.AsReadOnly(); }
-        }
-
-        public MapperRecordError(int recordNumber)
-        {
-            RecordNumber = recordNumber;
-            _Errors = new List<string>();
-        }
-
-        public void AddErrorMessage(string message)
-        {
-            _Errors.Add(message);
-        }
-
-        public void AddErrorMessages(IEnumerable<string> messages)
-        {
-            _Errors.AddRange(messages);
+            ErrorFile = "";
         }
     }
 
@@ -154,7 +54,7 @@ namespace Mapper
             FileLibrary = fileLibrary;
         }
 
-        public async Task<MapperUploadResult> UploadFileAsync(string importName, string fileName, CancellationToken cancellationToken)
+        public async Task<MapperUploadResult> UploadFileAsync(string importName, string fileName, string outputFolder, CancellationToken cancellationToken)
         {
 
             var requestContent = new MultipartFormDataContent();
@@ -193,20 +93,41 @@ namespace Mapper
 
             /* Handle the import errors */
             var recordErrors = xmlResult.SelectNodes("import/errors/record");
-            foreach (XmlNode recordError in recordErrors)
+            if (recordErrors.Count > 0)
             {
-                var recordNumber = int.Parse(recordError.Attributes["number"].Value);
-              
-                var errors = new List<string>();
-                var messages = recordError.SelectNodes("message");
-                foreach (XmlNode message in messages)
-                    errors.Add(message.InnerText);
+                result.ErrorFile = Path.Combine(outputFolder, importName + "_errors.csv");
+                var csvFile = File.CreateText(result.ErrorFile);
 
-                result.Errors.AddErrors(recordNumber, errors);
+                var csvWriter = new CsvWriter(csvFile);
+                csvWriter.WriteHeader<CsvMapperErrorRecord>();
+
+                foreach (XmlNode recordError in recordErrors)
+                {
+                    var recordNumber = int.Parse(recordError.Attributes["number"].Value);
+
+                    var messages = recordError.SelectNodes("message");
+                    foreach (XmlNode message in messages)
+                    {
+                        var outputRecord = new CsvMapperErrorRecord()
+                        {
+                            RecordNumber = recordNumber,
+                            Message = message.InnerText 
+                        };
+                        csvWriter.WriteRecord(outputRecord);
+                    }
+                }
+
+                csvFile.Close();
             }
 
             return result;
         }
+    }
+
+    public class CsvMapperErrorRecord
+    {
+        public int RecordNumber { get; set; }
+        public string Message { get; set; }
     }
 
 
