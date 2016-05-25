@@ -82,7 +82,7 @@ namespace TestHarness
             Directory.CreateDirectory(testRunOutputFolder);
 
             var testVariables = new Dictionary<string, string>(variables);
-            var testResult = await unitTest.RunAsync(testVariables, testRunOutputFolder, cancellationToken, null);
+            var testResult = await unitTest.RunAsync(testVariables, new TestOutputFileNameGenerator(testRunOutputFolder), cancellationToken, null);
 
             if (progress != null)
             {
@@ -99,7 +99,7 @@ namespace TestHarness
         public async Task<TestRunResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
         {
 
-            var testRunOutputFolder = Path.Combine(outputFolder, "Test Run " + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            var testRunOutputFolder = Path.Combine(outputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
             Directory.CreateDirectory(testRunOutputFolder);
 
             TestRunResult result = new TestRunResult();

@@ -103,7 +103,7 @@ namespace TestHarness
                 return null;
         }
 
-        public async Task<TestResult> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<UnitTestProgress> progress)
+        public async Task<TestResult> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken, IProgress<UnitTestProgress> progress)
         {
             bool testSuccessful;
 
@@ -121,7 +121,7 @@ namespace TestHarness
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, fileNameGenerator, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -147,7 +147,7 @@ namespace TestHarness
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, fileNameGenerator, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -178,7 +178,7 @@ namespace TestHarness
             {
                 try
                 {
-                    testSuccessful = await task.RunAsync(variables, outputFolder, cancellationToken);
+                    testSuccessful = await task.RunAsync(variables, fileNameGenerator, cancellationToken);
                 }
                 catch (Exception e)
                 {

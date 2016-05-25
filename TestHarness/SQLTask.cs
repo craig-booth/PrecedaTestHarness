@@ -68,7 +68,7 @@ namespace TestHarness
             }
         }
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace TestHarness
                 {
                     ActualResult = new SQLTaskResult()
                     {
-                        DataFileName = Path.Combine(outputFolder, "data.csv")
+                        DataFileName = fileNameGenerator.GetOutputFileName("data", "csv")                        
                     };
 
                     var successfull = await sqlQuery.RunQuery(SQLStatement, ActualResult.DataFileName);

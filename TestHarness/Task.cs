@@ -15,6 +15,6 @@ namespace TestHarness
         string Message { get; }
         TaskResult Result { get; }
 
-        Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken);
+        Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken);
     }
 }

@@ -118,7 +118,7 @@ namespace TestHarness
             ExpectedResult = new MapperTaskResult(recordsAdded, recordsUpdated, recordsDeleted, recordsFailed, recordsTotal, errorFile);            
         }
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
         {
             try
             {
@@ -126,8 +126,9 @@ namespace TestHarness
                 Message = "";
 
                 var mapperImport = new MapperImport(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
-             
-                var uploadResult = await mapperImport.UploadFileAsync(ImportName, FileName, outputFolder,  cancellationToken);              
+
+                var errorFileName = fileNameGenerator.GetOutputFileName(ImportName + "_errors", "csv");
+                var uploadResult = await mapperImport.UploadFileAsync(ImportName, FileName, errorFileName,  cancellationToken);              
                 ActualResult = new MapperTaskResult(uploadResult);
 
                 if (ExpectedResult.Equals(ActualResult))

@@ -83,7 +83,7 @@ namespace TestHarness
         }
 
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
         {
             StringWriter output = new StringWriter();
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 using TestHarness;
 
@@ -16,6 +17,7 @@ namespace TestRunner
     public partial class UnitTestForm : Form
     {
         private UnitTest _UnitTest;
+        private string _OutputFolder;
         private Dictionary<string, string> _Variables;
 
         public UnitTestForm()
@@ -35,9 +37,10 @@ namespace TestRunner
             Show();
         }
 
-        public void RunUnitTest(UnitTest unitTest, Dictionary<string, string> variables)
+        public void RunUnitTest(UnitTest unitTest, string outputFolder, Dictionary<string, string> variables)
         {
             _UnitTest = unitTest;
+            _OutputFolder = outputFolder;
             _Variables = variables;
 
             btnRefresh.Enabled = false;
@@ -125,7 +128,10 @@ namespace TestRunner
         {
             var progress = new Progress<UnitTestProgress>(OnUnitTestProgress);
 
-            await _UnitTest.RunAsync(_Variables, "", CancellationToken.None, progress);
+            var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            Directory.CreateDirectory(testRunOutputFolder);
+
+            await _UnitTest.RunAsync(_Variables, new TestOutputFileNameGenerator(testRunOutputFolder), CancellationToken.None, progress);
 
             UpdateDisplay(); 
         }

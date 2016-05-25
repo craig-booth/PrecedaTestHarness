@@ -78,10 +78,7 @@ namespace TestRunner
          
             try
             {
-                var outputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                Directory.CreateDirectory(outputFolder);
-
-                var result = await _TestSuite.RunAllAsync(variables, outputFolder, _CancellationTokenSource.Token, progress);
+                var result = await _TestSuite.RunAllAsync(variables, _OutputFolder, _CancellationTokenSource.Token, progress);
             }
             catch (OperationCanceledException)
             {
@@ -149,7 +146,7 @@ namespace TestRunner
 
 
                 var unitTestForm = new UnitTestForm();
-                unitTestForm.RunUnitTest(unitTest, variables);                
+                unitTestForm.RunUnitTest(unitTest, _OutputFolder, variables);                
             }
         }
 

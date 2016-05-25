@@ -49,6 +49,7 @@
     <Compile Include="PayrollExchangeUploadBodTask.cs" />
     <Compile Include="SQLTask.cs" />
     <Compile Include="Task.cs" />
+    <Compile Include="TestOutputFileNameGenerator.cs" />
     <Compile Include="TestSuite.cs" />
     <Compile Include="UnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

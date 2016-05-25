@@ -54,7 +54,7 @@ namespace Mapper
             FileLibrary = fileLibrary;
         }
 
-        public async Task<MapperUploadResult> UploadFileAsync(string importName, string fileName, string outputFolder, CancellationToken cancellationToken)
+        public async Task<MapperUploadResult> UploadFileAsync(string importName, string fileName, string errorFileName, CancellationToken cancellationToken)
         {
 
             var requestContent = new MultipartFormDataContent();
@@ -95,7 +95,7 @@ namespace Mapper
             var recordErrors = xmlResult.SelectNodes("import/errors/record");
             if (recordErrors.Count > 0)
             {
-                result.ErrorFile = Path.Combine(outputFolder, importName + "_errors.csv");
+                result.ErrorFile = errorFileName;  
                 var csvFile = File.CreateText(result.ErrorFile);
 
                 var csvWriter = new CsvWriter(csvFile);
