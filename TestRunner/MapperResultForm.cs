@@ -16,66 +16,76 @@ namespace TestRunner
 {
     public partial class MapperResultForm : Form
     {
-        private MapperTask _Task;
+        public UnitTest UnitTest { get; private set; }
+        public MapperTask Task { get; private set; }
 
-        public MapperResultForm()
+        private MapperResultForm()
         {
             InitializeComponent();
         }
-        
-        public MapperTask Task
+
+        public MapperResultForm(UnitTest unitTest, MapperTask task)
+            : this()
         {
-            set
-            {
-                _Task = value;
+            UnitTest = unitTest;
+            Task = task;
+        }
 
-                lblExpectedAdded.Text = _Task.ExpectedResult.RecordsAdded.ToString();
-                lblExpectedUpdated.Text = _Task.ExpectedResult.RecordsUpdated.ToString();
-                lblExpectedDeleted.Text = _Task.ExpectedResult.RecordsDeleted.ToString();
-                lblExpectedFailed.Text = _Task.ExpectedResult.RecordsFailed.ToString();
-                lblExpectedTotal.Text = _Task.ExpectedResult.RecordsTotal.ToString();
+        private void MapperResultForm_Shown(object sender, EventArgs e)
+        {
+            lblExpectedAdded.Text = Task.ExpectedResult.RecordsAdded.ToString();
+            lblExpectedUpdated.Text = Task.ExpectedResult.RecordsUpdated.ToString();
+            lblExpectedDeleted.Text = Task.ExpectedResult.RecordsDeleted.ToString();
+            lblExpectedFailed.Text = Task.ExpectedResult.RecordsFailed.ToString();
+            lblExpectedTotal.Text = Task.ExpectedResult.RecordsTotal.ToString();
 
 
-                lblActualAdded.Text = _Task.ActualResult.RecordsAdded.ToString();
-                if (_Task.ActualResult.RecordsAdded != _Task.ExpectedResult.RecordsAdded)
-                    lblActualAdded.ForeColor = Color.Red;
+            lblActualAdded.Text = Task.ActualResult.RecordsAdded.ToString();
+            if (Task.ActualResult.RecordsAdded != Task.ExpectedResult.RecordsAdded)
+                lblActualAdded.ForeColor = Color.Red;
 
-                lblActualUpdated.Text = _Task.ActualResult.RecordsUpdated.ToString();
-                if (_Task.ActualResult.RecordsUpdated != _Task.ExpectedResult.RecordsUpdated)
-                    lblActualUpdated.ForeColor = Color.Red;
+            lblActualUpdated.Text = Task.ActualResult.RecordsUpdated.ToString();
+            if (Task.ActualResult.RecordsUpdated != Task.ExpectedResult.RecordsUpdated)
+                lblActualUpdated.ForeColor = Color.Red;
 
-                lblActualDeleted.Text = _Task.ActualResult.RecordsDeleted.ToString();
-                if (_Task.ActualResult.RecordsDeleted != _Task.ExpectedResult.RecordsDeleted)
-                    lblActualDeleted.ForeColor = Color.Red;
+            lblActualDeleted.Text = Task.ActualResult.RecordsDeleted.ToString();
+            if (Task.ActualResult.RecordsDeleted != Task.ExpectedResult.RecordsDeleted)
+                lblActualDeleted.ForeColor = Color.Red;
 
-                lblActualFailed.Text = _Task.ActualResult.RecordsFailed.ToString();
-                if (_Task.ActualResult.RecordsFailed != _Task.ExpectedResult.RecordsFailed)
-                    lblActualFailed.ForeColor = Color.Red;
+            lblActualFailed.Text = Task.ActualResult.RecordsFailed.ToString();
+            if (Task.ActualResult.RecordsFailed != Task.ExpectedResult.RecordsFailed)
+                lblActualFailed.ForeColor = Color.Red;
 
-                lblActualTotal.Text = _Task.ActualResult.RecordsTotal.ToString();
-                if (_Task.ActualResult.RecordsTotal != _Task.ExpectedResult.RecordsTotal)
-                    lblActualTotal.ForeColor = Color.Red;
+            lblActualTotal.Text = Task.ActualResult.RecordsTotal.ToString();
+            if (Task.ActualResult.RecordsTotal != Task.ExpectedResult.RecordsTotal)
+                lblActualTotal.ForeColor = Color.Red;
 
-                btnViewExpectedErrors.Enabled = (_Task.ExpectedResult.ErrorFile != "");
-                btnViewActualErrors.Enabled = (_Task.ActualResult.ErrorFile != "");
-                btnCompareErrors.Enabled = (_Task.ExpectedResult.ErrorFile != "") && (_Task.ActualResult.ErrorFile != "");
-            }
+            btnViewExpectedErrors.Enabled = (Task.ExpectedResult.ErrorFile != "");
+            btnViewActualErrors.Enabled = (Task.ActualResult.ErrorFile != "");
+            btnCompareErrors.Enabled = (Task.ExpectedResult.ErrorFile != "") && (Task.ActualResult.ErrorFile != "");
         }
 
         private void btnCompareErrors_Click(object sender, EventArgs e)
         {
-            ProcessStartInfo winMerge = new ProcessStartInfo();
+       /*     ProcessStartInfo winMerge = new ProcessStartInfo();
             winMerge.Arguments = String.Format("/e /u /dl \"Expected\" /wr /dr \"Actual\" \"{0}\" \"{1}\"", _Task.ExpectedResult.ErrorFile, _Task.ActualResult.ErrorFile);
             winMerge.FileName = Path.Combine(Application.StartupPath, "WinMerge", "WinMergeU.exe");
             winMerge.WindowStyle = ProcessWindowStyle.Normal;
 
-            Process.Start(winMerge);
+            Process.Start(winMerge); */
+
+            ProcessStartInfo diffMerge = new ProcessStartInfo();
+            diffMerge.Arguments = String.Format("-caption=\"{0}\" -t1=Actual -t2=Expected \"{1}\" \"{2}\"", UnitTest.Name, Task.ActualResult.ErrorFile, Task.ExpectedResult.ErrorFile);
+            diffMerge.FileName = Path.Combine(Application.StartupPath, "DiffMerge", "sgdm.exe");
+            diffMerge.WindowStyle = ProcessWindowStyle.Normal;
+
+            Process.Start(diffMerge);
         }
 
         private void btnViewExpectedErrors_Click(object sender, EventArgs e)
         {
             ProcessStartInfo notePad = new ProcessStartInfo();
-            notePad.Arguments = _Task.ExpectedResult.ErrorFile;
+            notePad.Arguments = Task.ExpectedResult.ErrorFile;
             notePad.FileName = Path.Combine(Environment.GetEnvironmentVariable("windir"), "system32", "notepad.exe");
             notePad.WindowStyle = ProcessWindowStyle.Normal;
 
@@ -85,16 +95,12 @@ namespace TestRunner
         private void btnViewActualErrors_Click(object sender, EventArgs e)
         {
             ProcessStartInfo notePad = new ProcessStartInfo();
-            notePad.Arguments = _Task.ActualResult.ErrorFile;
+            notePad.Arguments = Task.ActualResult.ErrorFile;
             notePad.FileName = Path.Combine(Environment.GetEnvironmentVariable("windir"), "system32", "notepad.exe");
             notePad.WindowStyle = ProcessWindowStyle.Normal;
 
             Process.Start(notePad);
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

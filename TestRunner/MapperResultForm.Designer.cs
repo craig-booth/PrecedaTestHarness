@@ -214,7 +214,6 @@
             this.btnOK.TabIndex = 17;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnCompareErrors
             // 
@@ -284,6 +283,7 @@
             this.Controls.Add(this.label1);
             this.Name = "MapperResultForm";
             this.Text = "MapperResult";
+            this.Shown += new System.EventHandler(this.MapperResultForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

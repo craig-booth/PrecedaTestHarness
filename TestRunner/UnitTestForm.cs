@@ -152,9 +152,7 @@ namespace TestRunner
                 { 
                     var mapperTask = task as MapperTask;
 
-                    var resultForm = new MapperResultForm();
-                    resultForm.Task = mapperTask;
-
+                    var resultForm = new MapperResultForm(_UnitTest, mapperTask);
                     resultForm.ShowDialog();
                 }
                 else if (task is SQLTask)
@@ -163,9 +161,7 @@ namespace TestRunner
 
                     if (sqlTask.RunMode == SQLRunMode.Query)
                     {
-                        var resultForm = new SQLResultForm();
-                        resultForm.Task = sqlTask;
-
+                        var resultForm = new SQLResultForm(_UnitTest, sqlTask);
                         resultForm.ShowDialog();
                     }
                 }

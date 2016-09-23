@@ -135,7 +135,6 @@
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(100, 20);
             this.txtUser.TabIndex = 2;
-            this.txtUser.Text = "CRAIGB";
             // 
             // txtPassword
             // 
@@ -162,7 +161,6 @@
             this.txtFileLibrary.Name = "txtFileLibrary";
             this.txtFileLibrary.Size = new System.Drawing.Size(100, 20);
             this.txtFileLibrary.TabIndex = 1;
-            this.txtFileLibrary.Text = "PRECFP15AU";
             // 
             // label1
             // 

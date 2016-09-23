@@ -118,6 +118,7 @@
             this.Controls.Add(this.label1);
             this.Name = "SQLResultForm";
             this.Text = "SQLResultForm";
+            this.Shown += new System.EventHandler(this.SQLResultForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
