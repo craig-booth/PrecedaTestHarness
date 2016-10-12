@@ -63,7 +63,7 @@
             this.btnRunAll.Location = new System.Drawing.Point(315, 82);
             this.btnRunAll.Name = "btnRunAll";
             this.btnRunAll.Size = new System.Drawing.Size(75, 23);
-            this.btnRunAll.TabIndex = 5;
+            this.btnRunAll.TabIndex = 7;
             this.btnRunAll.Text = "Run All";
             this.btnRunAll.UseVisualStyleBackColor = true;
             this.btnRunAll.Click += new System.EventHandler(this.btnRunAll_Click);
@@ -73,7 +73,7 @@
             this.btnOpen.Location = new System.Drawing.Point(24, 82);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(75, 23);
-            this.btnOpen.TabIndex = 4;
+            this.btnOpen.TabIndex = 5;
             this.btnOpen.Text = "Open";
             this.btnOpen.UseVisualStyleBackColor = true;
             this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
@@ -92,7 +92,7 @@
             this.lsvTests.Location = new System.Drawing.Point(0, 111);
             this.lsvTests.Name = "lsvTests";
             this.lsvTests.Size = new System.Drawing.Size(1018, 307);
-            this.lsvTests.TabIndex = 2;
+            this.lsvTests.TabIndex = 11;
             this.lsvTests.UseCompatibleStateImageBehavior = false;
             this.lsvTests.View = System.Windows.Forms.View.Details;
             this.lsvTests.DoubleClick += new System.EventHandler(this.lsvTests_DoubleClick);
@@ -123,7 +123,7 @@
             this.btnStop.Location = new System.Drawing.Point(802, 82);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
-            this.btnStop.TabIndex = 6;
+            this.btnStop.TabIndex = 10;
             this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
@@ -134,7 +134,7 @@
             this.txtUser.Location = new System.Drawing.Point(73, 39);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(100, 20);
-            this.txtUser.TabIndex = 2;
+            this.txtUser.TabIndex = 3;
             // 
             // txtPassword
             // 
@@ -143,7 +143,7 @@
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(100, 20);
-            this.txtPassword.TabIndex = 3;
+            this.txtPassword.TabIndex = 4;
             // 
             // txtServer
             // 
@@ -151,7 +151,7 @@
             this.txtServer.Location = new System.Drawing.Point(73, 13);
             this.txtServer.Name = "txtServer";
             this.txtServer.Size = new System.Drawing.Size(100, 20);
-            this.txtServer.TabIndex = 0;
+            this.txtServer.TabIndex = 1;
             this.txtServer.Text = "DEV3";
             // 
             // txtFileLibrary
@@ -160,7 +160,7 @@
             this.txtFileLibrary.Location = new System.Drawing.Point(283, 13);
             this.txtFileLibrary.Name = "txtFileLibrary";
             this.txtFileLibrary.Size = new System.Drawing.Size(100, 20);
-            this.txtFileLibrary.TabIndex = 1;
+            this.txtFileLibrary.TabIndex = 2;
             // 
             // label1
             // 
@@ -204,7 +204,7 @@
             this.btnRunSingle.Location = new System.Drawing.Point(603, 82);
             this.btnRunSingle.Name = "btnRunSingle";
             this.btnRunSingle.Size = new System.Drawing.Size(75, 23);
-            this.btnRunSingle.TabIndex = 12;
+            this.btnRunSingle.TabIndex = 9;
             this.btnRunSingle.Text = "Run Single";
             this.btnRunSingle.UseVisualStyleBackColor = true;
             this.btnRunSingle.Click += new System.EventHandler(this.btnRunSingle_Click);
@@ -215,7 +215,7 @@
             this.btnSaveOutput.Location = new System.Drawing.Point(142, 82);
             this.btnSaveOutput.Name = "btnSaveOutput";
             this.btnSaveOutput.Size = new System.Drawing.Size(75, 23);
-            this.btnSaveOutput.TabIndex = 13;
+            this.btnSaveOutput.TabIndex = 6;
             this.btnSaveOutput.Text = "Save Output";
             this.btnSaveOutput.UseVisualStyleBackColor = true;
             this.btnSaveOutput.Click += new System.EventHandler(this.btnSaveOutput_Click);
@@ -298,7 +298,7 @@
             this.btnRunSelected.Location = new System.Drawing.Point(396, 82);
             this.btnRunSelected.Name = "btnRunSelected";
             this.btnRunSelected.Size = new System.Drawing.Size(94, 23);
-            this.btnRunSelected.TabIndex = 22;
+            this.btnRunSelected.TabIndex = 8;
             this.btnRunSelected.Text = "Run Selected";
             this.btnRunSelected.UseVisualStyleBackColor = true;
             this.btnRunSelected.Click += new System.EventHandler(this.btnRunSelected_Click);

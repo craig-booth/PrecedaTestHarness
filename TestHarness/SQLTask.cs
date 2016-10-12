@@ -149,14 +149,42 @@ namespace TestHarness
             connectionStringBuilder["User Id"] = User;
             connectionStringBuilder["Password"] = Password;
             connectionStringBuilder["Naming Convention"] = 1;  // System naming
-            connectionStringBuilder["Library List"] = FileLibrary + ",PRECLP15,PRECPP15,QGPL,QTEMP"; 
             _ConnectionString = connectionStringBuilder.ConnectionString;
+        }
+
+        private async Task <string> GetLibraryList(OleDbConnection connection, string fileLibrary, string user)
+        {
+            string libraryList = "";
+
+            var sql = string.Format("SELECT INLLBL FROM {0}.PAYUSR WHERE USRPRF = '{1}'", fileLibrary, user);
+            OleDbCommand command = new OleDbCommand(sql, connection);
+            var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+                libraryList = reader.GetString(0);
+            
+            reader.Close();
+
+            return libraryList;
+        }
+
+        private async Task<int> SetLibraryList(OleDbConnection connection)
+        {
+            var libraryList = await GetLibraryList(connection, FileLibrary, User);
+            if (libraryList == "")
+                libraryList = await GetLibraryList(connection, FileLibrary, "*ANY");
+
+            var clCommand = string.Format("'CHGLIBL LIBL({0})'", libraryList);
+            var sql = string.Format("CALL QSYS/QCMDEXC({0}, {1:0000000000.00000})", clCommand, clCommand.Length - 2);
+            OleDbCommand command = new OleDbCommand(sql, connection);
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<bool> Execute(string sql)
         {
             var connection = new OleDbConnection(_ConnectionString);
             await connection.OpenAsync();
+
+            await SetLibraryList(connection);
 
             OleDbCommand command = new OleDbCommand(sql, connection);
             var result = await command.ExecuteNonQueryAsync();
@@ -170,6 +198,8 @@ namespace TestHarness
         {
             var connection = new OleDbConnection(_ConnectionString);
             await connection.OpenAsync();
+
+            await SetLibraryList(connection);
 
             OleDbCommand command = new OleDbCommand(sql, connection);
             var reader = await command.ExecuteReaderAsync();
