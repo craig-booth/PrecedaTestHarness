@@ -98,10 +98,6 @@ namespace TestHarness
 
         public async Task<TestRunResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
         {
-
-            var testRunOutputFolder = Path.Combine(outputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-            Directory.CreateDirectory(testRunOutputFolder);
-
             TestRunResult result = new TestRunResult();
 
             var unitTestTasks = new List<Task<TestResult>>();
@@ -109,7 +105,7 @@ namespace TestHarness
             while ((nextTask < NumberOfThreads) && (nextTask < UnitTests.Count))
             {
                 var unitTest = UnitTests[nextTask++];
-                unitTestTasks.Add(RunTestAsync(unitTest, variables, testRunOutputFolder, cancellationToken, progress));
+                unitTestTasks.Add(RunTestAsync(unitTest, variables, outputFolder, cancellationToken, progress));
             }
             
             while (unitTestTasks.Count > 0)
@@ -133,7 +129,7 @@ namespace TestHarness
                 if (nextTask < UnitTests.Count)
                 {
                     var unitTest = UnitTests[nextTask++];
-                    unitTestTasks.Add(RunTestAsync(unitTest, variables, testRunOutputFolder, cancellationToken, progress));
+                    unitTestTasks.Add(RunTestAsync(unitTest, variables, outputFolder, cancellationToken, progress));
                 }
             }
 

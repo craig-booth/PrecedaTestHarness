@@ -78,7 +78,10 @@ namespace TestRunner
          
             try
             {
-                var result = await _TestSuite.RunAllAsync(variables, _OutputFolder, _CancellationTokenSource.Token, progress);
+                var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                Directory.CreateDirectory(testRunOutputFolder);
+
+                var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
             }
             catch (OperationCanceledException)
             {

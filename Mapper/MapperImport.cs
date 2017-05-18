@@ -73,7 +73,21 @@ namespace Mapper
             fileStream.Close();
 
             /* Check the request was successful */
-            httpResponce.EnsureSuccessStatusCode();
+            if (! httpResponce.IsSuccessStatusCode)
+            {
+                string errorMessage = String.Format("{0:d} ({1})", httpResponce.StatusCode, httpResponce.ReasonPhrase);
+
+                var htmlErrorResponce = await httpResponce.Content.ReadAsStringAsync();
+
+                var messageStart = htmlErrorResponce.IndexOf("<P>");
+                var messageEnd = htmlErrorResponce.IndexOf("</P>");
+                if ((messageStart >= 0) && (messageEnd > messageStart))
+                {
+                    errorMessage += " - " + htmlErrorResponce.Substring(messageStart + 3, messageEnd - messageStart - 3);
+                }
+
+                throw new Exception(errorMessage);
+            }
 
             /* Load the xml responce */
             var responce = await httpResponce.Content.ReadAsStringAsync();

@@ -29,11 +29,16 @@ namespace TestHarness
         public List<ITask> TestTasks { get; private set; }
         public List<ITask> TearDownTasks { get; private set; }
 
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
         public TestResult Result { get; private set; }
 
         public UnitTest()
         {
             TestType = TestType.Positive;
+            
+            StartTime = new DateTime(0001, 01, 01);
+            EndTime = new DateTime(0001, 01, 01);
             Result = TestResult.NotRun;
 
             SetupTasks = new List<ITask>();
@@ -107,6 +112,7 @@ namespace TestHarness
         {
             bool testSuccessful;
 
+            StartTime = DateTime.Now;
             Result = TestResult.InProgress;
             
             var unitTestProgress = new UnitTestProgress();
@@ -192,6 +198,7 @@ namespace TestHarness
                 }
             }
 
+            EndTime = DateTime.Now;
             return Result;
 
         }
