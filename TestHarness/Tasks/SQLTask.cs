@@ -27,6 +27,8 @@ namespace TestHarness
 
     public class SQLTask : ITask
     {
+        public Guid Id { get; } = Guid.NewGuid();
+
         public string Description
         {
             get
@@ -40,40 +42,32 @@ namespace TestHarness
         public string Message { get; private set; }
         public TaskResult Result { get; private set; }
 
-        public string SQLStatement { get; private set; }
-        public SQLRunMode RunMode { get; private set; }
+        public string SQLStatement { get; set; }
+        public SQLRunMode RunMode { get; set; }
         public SQLTaskResult ExpectedResult;
         public SQLTaskResult ActualResult;
 
-        public SQLTask(XmlNode xml, string directory)
+        public SQLTask()
         {
             Message = "";
             Result = TaskResult.NotRun;
-
-            SQLStatement = xml.SelectSingleNode("statement").InnerText;
             RunMode = SQLRunMode.Execute;
 
             ExpectedResult = new SQLTaskResult();
             ActualResult = null;
-
-            var expectedResultNode = xml.SelectSingleNode("expectedresult");
-            if (expectedResultNode != null)
-            {
-                var dataNode = expectedResultNode.SelectSingleNode("data");
-                if (dataNode != null)
-                {
-                    RunMode = SQLRunMode.Query;
-                    ExpectedResult.DataFileName = Path.Combine(directory, dataNode.Attributes["file"].Value);
-                }
-            }
         }
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken, IProgress<TestProgress> progress)
         {
             try
             {
                 Result =  TaskResult.InProgress;
                 Message = "";
+
+                if (progress != null)
+                {
+                    progress.Report(new TestProgress(Id, TestResult.InProgress));
+                }
 
                 SQLQuery sqlQuery = new SQLQuery(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
                 if (RunMode == SQLRunMode.Execute)
@@ -82,6 +76,12 @@ namespace TestHarness
                     var successfull = await sqlQuery.Execute(SQLStatement);
 
                     Result = TaskResult.Passed;
+
+                    if (progress != null)
+                    {
+                        progress.Report(new TestProgress(Id, TestResult.Passed));
+                    }
+
                     return true;
 
                 }
@@ -110,12 +110,27 @@ namespace TestHarness
 
                 }
 
+                if (progress != null)
+                {
+                    if (Result == TaskResult.Passed)
+                        progress.Report(new TestProgress(Id, TestResult.Passed));
+                    else
+                        progress.Report(new TestProgress(Id, TestResult.Failed));
+                }
+
                 return (Result == TaskResult.Passed);
             }
             catch (Exception e)
             {
                 Result = TaskResult.ExceptionOccurred;
-                Message = "An exception occurred: " + e.Message;                
+                Message = "An exception occurred: " + e.Message;
+
+
+                if (progress != null)
+                {
+                    progress.Report(new TestProgress(Id, TestResult.Failed));
+                }
+
                 return false;
             }
         }

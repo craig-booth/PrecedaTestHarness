@@ -44,15 +44,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
     <Compile Include="FileComparer.cs" />
-    <Compile Include="MapperTask.cs" />
-    <Compile Include="PayrollExchangeUploadBodTask.cs" />
-    <Compile Include="SQLTask.cs" />
-    <Compile Include="Task.cs" />
+    <Compile Include="Tasks\MapperTask.cs" />
+    <Compile Include="Tasks\PayrollExchangeUploadBodTask.cs" />
+    <Compile Include="Tasks\SQLTask.cs" />
+    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="TestCase.cs" />
+    <Compile Include="TestGroup.cs" />
+    <Compile Include="TestItem.cs" />
     <Compile Include="TestOutputFileNameGenerator.cs" />
     <Compile Include="TestSuite.cs" />
     <Compile Include="UnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHarnessReader.cs" />
+    <Compile Include="TestHarnessWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mapper\Mapper.csproj">

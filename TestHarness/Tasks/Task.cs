@@ -11,10 +11,11 @@ namespace TestHarness
 
     public interface ITask
     {
+        Guid Id { get; }
         string Description { get; }
         string Message { get; }
         TaskResult Result { get; }
 
-        Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken);
+        Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken, IProgress<TestProgress> progress);
     }
 }

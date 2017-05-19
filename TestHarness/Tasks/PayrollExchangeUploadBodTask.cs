@@ -47,6 +47,8 @@ namespace TestHarness
 
     public class PayrollExchangeUploadBodTask : ITask
     {
+        public Guid Id { get; } = Guid.NewGuid();
+
         public string Description
         {
             get
@@ -83,7 +85,7 @@ namespace TestHarness
         }
 
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken, IProgress<TestProgress> progess)
         {
             StringWriter output = new StringWriter();
 

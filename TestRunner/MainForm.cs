@@ -41,7 +41,7 @@ namespace TestRunner
                 _TestSuite = new TestSuite(dialog.FileName);
 
                 lsvTests.Items.Clear();
-                foreach (UnitTest unitTest in _TestSuite.UnitTests)
+          /*      foreach (UnitTest unitTest in _TestSuite.UnitTests)
                 { 
                     var newItem = lsvTests.Items.Add(unitTest.Name);
                     newItem.SubItems.Add(unitTest.Description);
@@ -49,8 +49,8 @@ namespace TestRunner
                     newItem.SubItems.Add("");
 
                     newItem.Tag = unitTest;
-                }
-
+                } */
+                 
                 EnableButtons(true);
             }            
         }
@@ -59,10 +59,10 @@ namespace TestRunner
         {
             EnableButtons(false);
 
-            lblTestsTotal.Text = _TestSuite.UnitTests.Count.ToString();
+    /*        lblTestsTotal.Text = _TestSuite.UnitTests.Count.ToString();
             lblTestsPassed.Text = "0";
             lblTestsFailed.Text = "0";
-            lblTestsNotRun.Text = _TestSuite.UnitTests.Count.ToString();
+            lblTestsNotRun.Text = _TestSuite.UnitTests.Count.ToString(); */
 
             foreach (ListViewItem item in lsvTests.Items)
                 item.SubItems[3].Text = "";
@@ -73,26 +73,28 @@ namespace TestRunner
             variables["USER"] = txtUser.Text;
             variables["PASSWORD"] = txtPassword.Text;
 
-            _CancellationTokenSource = new CancellationTokenSource();        
-            Progress<TestRunProgress> progress = new Progress<TestRunProgress>(OnTestRunProgress);
-         
-            try
-            {
-                var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                Directory.CreateDirectory(testRunOutputFolder);
+            /*    
 
-                var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
-            }
-            catch (OperationCanceledException)
-            {
-                // User cancelled processing
-                
-            }
+                try
+                {
+                    _CancellationTokenSource = new CancellationTokenSource();        
+                    Progress<TestRunProgress> progress = new Progress<TestRunProgress>(OnTestRunProgress);
+
+                    var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                    Directory.CreateDirectory(testRunOutputFolder);
+
+                    var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
+                }
+                catch (OperationCanceledException)
+                {
+                    // User cancelled processing
+
+                } */
 
             EnableButtons(true);
         }
 
-        private void OnTestRunProgress(TestRunProgress progress)
+     /*   private void OnTestRunProgress(TestRunProgress progress)
         {
           string[] resultDescriptions = new string[5] {"Not Run", "In Progress", "Setup Failed", "Passed", "Failed"};
 
@@ -116,7 +118,7 @@ namespace TestRunner
                 lblTestsNotRun.Text = (int.Parse(lblTestsNotRun.Text) - 1).ToString();
             }
             
-        } 
+        } */
 
         private void btnStop_Click(object sender, EventArgs e)
         {
@@ -163,7 +165,7 @@ namespace TestRunner
 
         private void btnSaveOutput_Click(object sender, EventArgs e)
         {
-            var dialog = new SaveFileDialog();
+    /*        var dialog = new SaveFileDialog();
             dialog.DefaultExt = ".csv";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -206,7 +208,7 @@ namespace TestRunner
                 }
 
                 streamWriter.Close();
-            }        
+            }      */  
         }
 
         private void btnRunSelected_Click(object sender, EventArgs e)

@@ -10,65 +10,29 @@ using System.IO;
 namespace TestHarness
 {
     
-    public class TestRunResult
-    {
-        public int Total { get; set;}
-        public int NotRun { get; set;}
-        public int SetupFailed { get; set;}
-        public int Passed { get; set;}
-        public int Failed { get; set;}
-    }
-
-    public class TestRunProgress
-    {
-        public string TestName { get; set; }
-        public TestResult TestResult { get; set; }
-        public TestRunResult OverallResult { get; set;  }
-    }
-
-    public enum RunMode { Async, Sync};
 
     public class TestSuite
-    {
-        public RunMode RunMode { get; private set; }
-        public int NumberOfThreads { get; private set; }
-        public List<UnitTest> UnitTests { get; private set; }
+    {        
+        public ITestItem Test { get; set; }
+
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
+        public TestResult Result { get; private set; }
+        public TestSummary Summary { get; private set; }
 
         public TestSuite()
         {
-            UnitTests = new List<UnitTest>();
+            StartTime = new DateTime(0001, 01, 01);
+            EndTime = new DateTime(0001, 01, 01);
+            Result = TestResult.NotRun;
+            Summary = new TestSummary();
         }
 
-        public TestSuite(string fileName)
-            : this()
+
+        public async Task<TestResult> RunTestAsync(TestCase testCase, Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestProgress> progress)
         {
-            var directory = Path.GetDirectoryName(fileName);
-
-            var xml = new XmlDocument();
-            xml.Load(fileName);
-
-            RunMode = RunMode.Async;
-            NumberOfThreads = 5;
-            var runModeAttribute = xml.DocumentElement.Attributes["runmode"];
-            if (runModeAttribute != null)
-            {
-                if (runModeAttribute.Value == "sync")
-                {
-                    RunMode = RunMode.Sync;
-                    NumberOfThreads = 1;
-                }
-            }
-
-            var unitTests = xml.DocumentElement.SelectNodes("unittest");
-            foreach (XmlNode unitTest in unitTests)
-                UnitTests.Add(new UnitTest(unitTest, directory));
-
-        }
-    
-
-        public async Task<TestResult> RunTestAsync(UnitTest unitTest, Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
-        {
-            if (progress != null)
+            throw new NotSupportedException();
+     /*       if (progress != null)
             {
                 progress.Report(new TestRunProgress()
                 {
@@ -77,7 +41,7 @@ namespace TestHarness
                 });
             }
 
-            /* Create the output folder */
+            // Create the output folder 
             var testRunOutputFolder = Path.Combine(outputFolder, unitTest.Name);
             Directory.CreateDirectory(testRunOutputFolder);
 
@@ -92,48 +56,38 @@ namespace TestHarness
                     TestResult = testResult
                 });
             } 
-
-            return testResult;
-        }
-
-        public async Task<TestRunResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestRunProgress> progress)
-        {
-            TestRunResult result = new TestRunResult();
-
-            var unitTestTasks = new List<Task<TestResult>>();
-            int nextTask = 0;
-            while ((nextTask < NumberOfThreads) && (nextTask < UnitTests.Count))
-            {
-                var unitTest = UnitTests[nextTask++];
-                unitTestTasks.Add(RunTestAsync(unitTest, variables, outputFolder, cancellationToken, progress));
-            }
             
-            while (unitTestTasks.Count > 0)
-            {
-                var unitTestTask = await Task.WhenAny(unitTestTasks);
-                unitTestTasks.Remove(unitTestTask);
-
-                var testResult = await unitTestTask;
-
-                if (testResult == TestResult.NotRun)
-                    result.NotRun++;
-                if (testResult == TestResult.SetupFailed)
-                    result.SetupFailed++;
-                if (testResult == TestResult.Passed)
-                    result.Passed++;
-                if (testResult == TestResult.Failed)
-                    result.Failed++;
-
-                result.Total++;
-                
-                if (nextTask < UnitTests.Count)
-                {
-                    var unitTest = UnitTests[nextTask++];
-                    unitTestTasks.Add(RunTestAsync(unitTest, variables, outputFolder, cancellationToken, progress));
-                }
-            }
-
-            return result;
+            return testResult; */
         } 
+
+        public async Task<TestResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestProgress> progress)
+        {
+            StartTime = DateTime.Now;
+            EndTime = new DateTime(0001, 01, 01);
+            Result = TestResult.InProgress;
+
+            Summary.Total = Test.TestCount;
+            Summary.NotRun = Summary.Total;
+            Summary.SetupFailed = 0;
+            Summary.Passed = 0;
+            Summary.Failed = 0;
+
+            Result = await Test.RunAsync(variables, outputFolder, cancellationToken, progress);
+        
+            if (Summary.Passed == Summary.Total)
+                Result = TestResult.Passed;
+            else
+                Result = TestResult.Failed;
+
+            Summary.Total = Test.Summary.Total;
+            Summary.NotRun = Test.Summary.NotRun;
+            Summary.SetupFailed = Test.Summary.SetupFailed;
+            Summary.Passed = Test.Summary.Passed;
+            Summary.Failed = Test.Summary.Failed;
+
+            EndTime = DateTime.Now;
+
+            return Result;
+        }
     }
 }

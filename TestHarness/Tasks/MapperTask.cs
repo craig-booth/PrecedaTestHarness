@@ -69,6 +69,8 @@ namespace TestHarness
 
     public class MapperTask : ITask
     {
+        public Guid Id { get; } = Guid.NewGuid();
+
         public string Description
         {
             get
@@ -80,50 +82,28 @@ namespace TestHarness
         public string Message { get; private set; }
         public TaskResult Result { get; private set; }
 
-        public string ImportName { get; private set; }
-        public string FileName { get; private set; }
+        public string ImportName { get; set; }
+        public string FileName { get; set; }
         public MapperTaskResult ExpectedResult;
         public MapperTaskResult ActualResult;
 
-        public MapperTask(XmlNode xml, string directory)
+        public MapperTask()
         {
             Message = "";
             Result = TaskResult.NotRun;
-
-            ImportName = xml.SelectSingleNode("import").InnerText;
-            FileName = Path.Combine(directory, xml.SelectSingleNode("file").InnerText);
-
             ActualResult = null;
-
-            var recordsAdded = 0;
-            var recordsUpdated = 0;
-            var recordsDeleted = 0;
-            var recordsFailed = 0;
-            var recordsTotal = 0;
-            var errorFile = "";
-
-            var expectedResultNode = xml.SelectSingleNode("expectedresult");
-            if (expectedResultNode != null)
-            {
-                recordsAdded = int.Parse(expectedResultNode.SelectSingleNode("added").InnerText);
-                recordsUpdated = int.Parse(expectedResultNode.SelectSingleNode("updated").InnerText);
-                recordsDeleted = int.Parse(expectedResultNode.SelectSingleNode("deleted").InnerText);
-                recordsFailed = int.Parse(expectedResultNode.SelectSingleNode("failed").InnerText);
-                recordsTotal = int.Parse(expectedResultNode.SelectSingleNode("total").InnerText);
-            }
-            var expectedErrors = expectedResultNode.SelectSingleNode("errors");
-            if (expectedErrors != null)
-                errorFile = Path.Combine(directory, expectedErrors.Attributes["file"].InnerText);
-
-            ExpectedResult = new MapperTaskResult(recordsAdded, recordsUpdated, recordsDeleted, recordsFailed, recordsTotal, errorFile);            
+            ExpectedResult = new MapperTaskResult(0, 0, 0, 0, 0, "");         
         }
 
-        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken)
+        public async Task<bool> RunAsync(Dictionary<string, string> variables, TestOutputFileNameGenerator fileNameGenerator, CancellationToken cancellationToken, IProgress<TestProgress> progress)
         {
             try
             {
                 Result = TaskResult.InProgress;
                 Message = "";
+
+                if (progress != null)
+                    progress.Report(new TestProgress(Id, TestResult.InProgress));
 
                 var mapperImport = new MapperImport(variables["SERVER"], variables["USER"], variables["PASSWORD"], variables["FILELIBRARY"]);
 
@@ -139,12 +119,25 @@ namespace TestHarness
                     Result = TaskResult.Failed;
                 }
 
+                if (progress != null)
+                {
+                    if (Result == TaskResult.Passed)
+                        progress.Report(new TestProgress(Id, TestResult.Passed));
+                    else 
+                        progress.Report(new TestProgress(Id, TestResult.Failed));
+                }
+                    
+
                 return (Result == TaskResult.Passed);
             }
             catch (Exception e)
             {
                 Result = TaskResult.ExceptionOccurred;
                 Message = "An exception occurred: " + e.Message;
+
+                if (progress != null)
+                    progress.Report(new TestProgress(Id, TestResult.Failed));
+
                 return false;
             }
 

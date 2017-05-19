@@ -59,10 +59,10 @@ namespace TestRunner
 
         private void LoadTaskDetails()
         {
-            lblName.Text = _UnitTest.Name;
+     /*       lblName.Text = _UnitTest.Name;
             lblDescription.Text = _UnitTest.Description;
             lblTestType.Text = _UnitTest.TestType.ToString();
-            lblResult.Text = _UnitTest.Result.ToString();
+            lblResult.Text = _UnitTest.Result.ToString(); */
 
             lsvUnitTest.Items.Clear();
 
@@ -75,7 +75,7 @@ namespace TestRunner
 
                 UpdateListViewItem(listItem, task);
             }
-            foreach (var task in _UnitTest.TestTasks)
+    /*        foreach (var task in _UnitTest.TestTasks)
             {
                 var listItem = new ListViewItem(task.Description);
                 listItem.Tag = task;
@@ -83,7 +83,7 @@ namespace TestRunner
                 lsvUnitTest.Items.Add(listItem);
 
                 UpdateListViewItem(listItem, task);
-            }
+            } */
             foreach (var task in _UnitTest.TearDownTasks)
             {
                 var listItem = new ListViewItem(task.Description);
@@ -97,7 +97,7 @@ namespace TestRunner
 
         private void UpdateDisplay()
         {
-            lblResult.Text = _UnitTest.Result.ToString();
+    /*        lblResult.Text = _UnitTest.Result.ToString();
 
             int index = 0;
             foreach (var task in _UnitTest.SetupTasks)
@@ -105,7 +105,7 @@ namespace TestRunner
             foreach (var task in _UnitTest.TestTasks)
                 UpdateListViewItem(lsvUnitTest.Items[index++], task);
             foreach (var task in _UnitTest.TearDownTasks)
-                UpdateListViewItem(lsvUnitTest.Items[index++], task);
+                UpdateListViewItem(lsvUnitTest.Items[index++], task); */
         }
 
         private void UpdateListViewItem(ListViewItem item, ITask task)
@@ -126,21 +126,21 @@ namespace TestRunner
 
         private async void btnRun_Click(object sender, EventArgs e)
         {
-            var progress = new Progress<UnitTestProgress>(OnUnitTestProgress);
+  /*          var progress = new Progress<UnitTestProgress>(OnUnitTestProgress);
 
             var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
             Directory.CreateDirectory(testRunOutputFolder);
 
             await _UnitTest.RunAsync(_Variables, new TestOutputFileNameGenerator(testRunOutputFolder), CancellationToken.None, progress);
 
-            UpdateDisplay(); 
+            UpdateDisplay();  */
         }
 
 
-        private void OnUnitTestProgress(UnitTestProgress progress)
+ /*       private void OnUnitTestProgress(UnitTestProgress progress)
         {
             UpdateDisplay();
-        }
+        } */
 
         private void lsvUnitTest_DoubleClick(object sender, EventArgs e)
         {           
