@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
 using System.Xml;
+using System.Xml.Xsl;
 
 using TestHarness;
 
@@ -35,6 +36,10 @@ namespace ConsoleRunner
             var consoleSuiteRunner = new ConsoleSuiteRunner();
 
             consoleSuiteRunner.RunTest(testFile, variables, testRunOutputFolder);
+
+            var transform = new XslCompiledTransform();
+            transform.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Report.xsl"));
+            transform.Transform(Path.Combine(testRunOutputFolder, "result.xml"), Path.Combine(testRunOutputFolder, "result.html"));
         }
 
         private static Dictionary<string, string> ParseCommandLineParameters(IEnumerable<string> args)
