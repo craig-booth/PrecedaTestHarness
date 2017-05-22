@@ -17,7 +17,7 @@ namespace TestRunner
     public partial class SQLResultForm : Form
     {
 
-        public UnitTest UnitTest { get; private set; }
+        public TestCase TestCase { get; private set; }
         public SQLTask Task { get; private set; }
 
         private SQLResultForm()
@@ -25,10 +25,10 @@ namespace TestRunner
             InitializeComponent();
         }
 
-        public SQLResultForm(UnitTest unitTest, SQLTask task)
+        public SQLResultForm(TestCase testCase, SQLTask task)
             : this()
         {
-            UnitTest = unitTest;
+            TestCase = testCase;
             Task = task;
         }
 
@@ -69,7 +69,7 @@ namespace TestRunner
               Process.Start(winMerge); */
 
             ProcessStartInfo diffMerge = new ProcessStartInfo();
-            diffMerge.Arguments = String.Format("-caption=\"{0}\" -t1=Actual -t2=Expected \"{1}\" \"{2}\"", UnitTest.Name, Task.ActualResult.DataFileName, Task.ExpectedResult.DataFileName);
+            diffMerge.Arguments = String.Format("-caption=\"{0}\" -t1=Actual -t2=Expected \"{1}\" \"{2}\"", TestCase.Name, Task.ActualResult.DataFileName, Task.ExpectedResult.DataFileName);
             diffMerge.FileName = Path.Combine(Application.StartupPath, "DiffMerge", "sgdm.exe");
             diffMerge.WindowStyle = ProcessWindowStyle.Normal;
 

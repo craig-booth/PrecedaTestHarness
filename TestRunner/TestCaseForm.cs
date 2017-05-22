@@ -14,20 +14,20 @@ using TestHarness;
 
 namespace TestRunner
 {
-    public partial class UnitTestForm : Form
+    public partial class TestCaseForm : Form
     {
-        private UnitTest _UnitTest;
+        private TestCase _TestCase;
         private string _OutputFolder;
         private Dictionary<string, string> _Variables;
 
-        public UnitTestForm()
+        public TestCaseForm()
         {
             InitializeComponent();
         }
 
-        public void ShowUnitTest(UnitTest unitTest)
+        public void ShowUnitTest(TestCase testCase)
         {
-            _UnitTest = unitTest;
+            _TestCase = testCase;
 
             btnRefresh.Enabled = true;
             btnRun.Enabled = false;
@@ -37,9 +37,9 @@ namespace TestRunner
             Show();
         }
 
-        public void RunUnitTest(UnitTest unitTest, string outputFolder, Dictionary<string, string> variables)
+        public void RunUnitTest(TestCase testCase, string outputFolder, Dictionary<string, string> variables)
         {
-            _UnitTest = unitTest;
+            _TestCase = testCase;
             _OutputFolder = outputFolder;
             _Variables = variables;
 
@@ -59,14 +59,14 @@ namespace TestRunner
 
         private void LoadTaskDetails()
         {
-     /*       lblName.Text = _UnitTest.Name;
-            lblDescription.Text = _UnitTest.Description;
-            lblTestType.Text = _UnitTest.TestType.ToString();
-            lblResult.Text = _UnitTest.Result.ToString(); */
+            lblName.Text = _TestCase.Name;
+            lblDescription.Text = _TestCase.Description;
+            lblTestType.Text = _TestCase.TestType.ToString();
+            lblResult.Text = _TestCase.Result.ToString(); 
 
             lsvUnitTest.Items.Clear();
 
-            foreach (var task in _UnitTest.SetupTasks)
+            foreach (var task in _TestCase.SetupTasks)
             {
                 var listItem = new ListViewItem(task.Description);
                 listItem.Tag = task;
@@ -75,7 +75,7 @@ namespace TestRunner
 
                 UpdateListViewItem(listItem, task);
             }
-    /*        foreach (var task in _UnitTest.TestTasks)
+            foreach (var task in _TestCase.TestTasks)
             {
                 var listItem = new ListViewItem(task.Description);
                 listItem.Tag = task;
@@ -83,8 +83,8 @@ namespace TestRunner
                 lsvUnitTest.Items.Add(listItem);
 
                 UpdateListViewItem(listItem, task);
-            } */
-            foreach (var task in _UnitTest.TearDownTasks)
+            } 
+            foreach (var task in _TestCase.TearDownTasks)
             {
                 var listItem = new ListViewItem(task.Description);
                 listItem.Group = lsvUnitTest.Groups["lvgTearDown"];
@@ -97,15 +97,15 @@ namespace TestRunner
 
         private void UpdateDisplay()
         {
-    /*        lblResult.Text = _UnitTest.Result.ToString();
+            lblResult.Text = _TestCase.Result.ToString();
 
             int index = 0;
-            foreach (var task in _UnitTest.SetupTasks)
+            foreach (var task in _TestCase.SetupTasks)
                 UpdateListViewItem(lsvUnitTest.Items[index++], task);
-            foreach (var task in _UnitTest.TestTasks)
+            foreach (var task in _TestCase.TestTasks)
                 UpdateListViewItem(lsvUnitTest.Items[index++], task);
-            foreach (var task in _UnitTest.TearDownTasks)
-                UpdateListViewItem(lsvUnitTest.Items[index++], task); */
+            foreach (var task in _TestCase.TearDownTasks)
+                UpdateListViewItem(lsvUnitTest.Items[index++], task); 
         }
 
         private void UpdateListViewItem(ListViewItem item, ITask task)
@@ -126,21 +126,21 @@ namespace TestRunner
 
         private async void btnRun_Click(object sender, EventArgs e)
         {
-  /*          var progress = new Progress<UnitTestProgress>(OnUnitTestProgress);
+            var progress = new Progress<TestProgress>(OnTestProgress);
 
             var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
             Directory.CreateDirectory(testRunOutputFolder);
 
-            await _UnitTest.RunAsync(_Variables, new TestOutputFileNameGenerator(testRunOutputFolder), CancellationToken.None, progress);
+            await _TestCase.RunAsync(_Variables, testRunOutputFolder, CancellationToken.None, progress);
 
-            UpdateDisplay();  */
+            UpdateDisplay();  
         }
 
 
- /*       private void OnUnitTestProgress(UnitTestProgress progress)
+        private void OnTestProgress(TestProgress progress)
         {
             UpdateDisplay();
-        } */
+        } 
 
         private void lsvUnitTest_DoubleClick(object sender, EventArgs e)
         {           
@@ -152,7 +152,7 @@ namespace TestRunner
                 { 
                     var mapperTask = task as MapperTask;
 
-                    var resultForm = new MapperResultForm(_UnitTest, mapperTask);
+                    var resultForm = new MapperResultForm(_TestCase, mapperTask);
                     resultForm.ShowDialog();
                 }
                 else if (task is SQLTask)
@@ -161,7 +161,7 @@ namespace TestRunner
 
                     if (sqlTask.RunMode == SQLRunMode.Query)
                     {
-                        var resultForm = new SQLResultForm(_UnitTest, sqlTask);
+                        var resultForm = new SQLResultForm(_TestCase, sqlTask);
                         resultForm.ShowDialog();
                     }
                 }

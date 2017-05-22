@@ -16,7 +16,7 @@ namespace TestRunner
 {
     public partial class MapperResultForm : Form
     {
-        public UnitTest UnitTest { get; private set; }
+        public TestCase TestCase { get; private set; }
         public MapperTask Task { get; private set; }
 
         private MapperResultForm()
@@ -24,10 +24,10 @@ namespace TestRunner
             InitializeComponent();
         }
 
-        public MapperResultForm(UnitTest unitTest, MapperTask task)
+        public MapperResultForm(TestCase testCase, MapperTask task)
             : this()
         {
-            UnitTest = unitTest;
+            TestCase = testCase;
             Task = task;
         }
 
@@ -75,7 +75,7 @@ namespace TestRunner
             Process.Start(winMerge); */
 
             ProcessStartInfo diffMerge = new ProcessStartInfo();
-            diffMerge.Arguments = String.Format("-caption=\"{0}\" -t1=Actual -t2=Expected \"{1}\" \"{2}\"", UnitTest.Name, Task.ActualResult.ErrorFile, Task.ExpectedResult.ErrorFile);
+            diffMerge.Arguments = String.Format("-caption=\"{0}\" -t1=Actual -t2=Expected \"{1}\" \"{2}\"", TestCase.Name, Task.ActualResult.ErrorFile, Task.ExpectedResult.ErrorFile);
             diffMerge.FileName = Path.Combine(Application.StartupPath, "DiffMerge", "sgdm.exe");
             diffMerge.WindowStyle = ProcessWindowStyle.Normal;
 

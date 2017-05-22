@@ -38,31 +38,56 @@ namespace TestRunner
             var dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                _TestSuite = new TestSuite(dialog.FileName);
+                _TestSuite = TestHarnessReader.LoadTestSuite(dialog.FileName);
 
                 lsvTests.Items.Clear();
-          /*      foreach (UnitTest unitTest in _TestSuite.UnitTests)
-                { 
-                    var newItem = lsvTests.Items.Add(unitTest.Name);
-                    newItem.SubItems.Add(unitTest.Description);
-                    newItem.SubItems.Add(unitTest.TestType.ToString());
-                    newItem.SubItems.Add("");
+                DisplayTestItem(_TestSuite.Test);
 
-                    newItem.Tag = unitTest;
-                } */
-                 
+                lblTestsTotal.Text = _TestSuite.Test.TestCount.ToString();
+                lblTestsPassed.Text = "0";
+                lblTestsFailed.Text = "0";
+                lblTestsNotRun.Text = lblTestsTotal.Text;
+
                 EnableButtons(true);
             }            
+        }
+
+        private void DisplayTestItem(ITestItem testItem)
+        {
+            if (testItem is TestGroup)
+                DisplayTestGroup(testItem as TestGroup);
+            else if (testItem is UnitTest)
+                DisplayUnitTest(testItem as UnitTest);
+        }
+
+        private void DisplayTestGroup(TestGroup testGroup)
+        {
+            foreach (var testItem in testGroup.Items)
+                DisplayTestItem(testItem);
+        }
+
+        private void DisplayUnitTest(UnitTest unitTest)
+        {
+            var group = lsvTests.Groups.Add(unitTest.Id.ToString(), unitTest.Name + " - " + unitTest.Description);
+            foreach (var testCase in unitTest.TestCases)
+            {
+                var newItem = lsvTests.Items.Add(testCase.Name);
+                newItem.Tag = testCase;
+                newItem.Group = group;
+                newItem.SubItems.Add(testCase.Description);
+                newItem.SubItems.Add(testCase.TestType.ToString());
+                newItem.SubItems.Add("");
+            }
         }
 
         private async void btnRunAll_Click(object sender, EventArgs e)
         {
             EnableButtons(false);
 
-    /*        lblTestsTotal.Text = _TestSuite.UnitTests.Count.ToString();
+            lblTestsTotal.Text = _TestSuite.Test.TestCount.ToString();
             lblTestsPassed.Text = "0";
             lblTestsFailed.Text = "0";
-            lblTestsNotRun.Text = _TestSuite.UnitTests.Count.ToString(); */
+            lblTestsNotRun.Text = lblTestsTotal.Text;
 
             foreach (ListViewItem item in lsvTests.Items)
                 item.SubItems[3].Text = "";
@@ -71,54 +96,50 @@ namespace TestRunner
             variables["SERVER"] = txtServer.Text;
             variables["FILELIBRARY"] = txtFileLibrary.Text;
             variables["USER"] = txtUser.Text;
-            variables["PASSWORD"] = txtPassword.Text;
+            variables["PASSWORD"] = txtPassword.Text;           
 
-            /*    
+            try
+            {
+                _CancellationTokenSource = new CancellationTokenSource();        
+                Progress<TestProgress> progress = new Progress<TestProgress>(OnTestRunProgress);
 
-                try
-                {
-                    _CancellationTokenSource = new CancellationTokenSource();        
-                    Progress<TestRunProgress> progress = new Progress<TestRunProgress>(OnTestRunProgress);
+                var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+                Directory.CreateDirectory(testRunOutputFolder);
 
-                    var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-                    Directory.CreateDirectory(testRunOutputFolder);
+                var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
+            }
+            catch (OperationCanceledException)
+            {
+                // User cancelled processing
 
-                    var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
-                }
-                catch (OperationCanceledException)
-                {
-                    // User cancelled processing
-
-                } */
+            } 
 
             EnableButtons(true);
         }
 
-     /*   private void OnTestRunProgress(TestRunProgress progress)
+        private void OnTestRunProgress(TestProgress progress)
         {
-          string[] resultDescriptions = new string[5] {"Not Run", "In Progress", "Setup Failed", "Passed", "Failed"};
+            string[] resultDescriptions = new string[5] {"Not Run", "In Progress", "Setup Failed", "Passed", "Failed"};
 
             foreach (ListViewItem item in lsvTests.Items)
             {
-                if (item.Text == progress.TestName)
+                if (((TestCase)item.Tag).Id == progress.Id)
                 {
-                    item.SubItems[3].Text = resultDescriptions[(int)progress.TestResult];
-                    break;
-                }
-            }
+                    item.SubItems[3].Text = resultDescriptions[(int)progress.Result];
 
-            if ((progress.TestResult == TestResult.Failed) || (progress.TestResult == TestResult.SetupFailed))
-            {
-                lblTestsFailed.Text = (int.Parse(lblTestsFailed.Text) + 1).ToString();
-                lblTestsNotRun.Text = (int.Parse(lblTestsNotRun.Text) - 1).ToString();
-            } 
-            else if (progress.TestResult == TestResult.Passed)
-            {
-                lblTestsPassed.Text = (int.Parse(lblTestsPassed.Text) + 1).ToString();
-                lblTestsNotRun.Text = (int.Parse(lblTestsNotRun.Text) - 1).ToString();
-            }
-            
-        } */
+                    if ((progress.Result == TestResult.Failed) || (progress.Result == TestResult.SetupFailed))
+                    {
+                        lblTestsFailed.Text = (int.Parse(lblTestsFailed.Text) + 1).ToString();
+                        lblTestsNotRun.Text = (int.Parse(lblTestsNotRun.Text) - 1).ToString();
+                    }
+                    else if (progress.Result == TestResult.Passed)
+                    {
+                        lblTestsPassed.Text = (int.Parse(lblTestsPassed.Text) + 1).ToString();
+                        lblTestsNotRun.Text = (int.Parse(lblTestsNotRun.Text) - 1).ToString();
+                    }
+                }
+            }           
+        } 
 
         private void btnStop_Click(object sender, EventArgs e)
         {
@@ -129,10 +150,10 @@ namespace TestRunner
         {
             if (lsvTests.FocusedItem != null)
             {
-                var unitTest = lsvTests.FocusedItem.Tag as UnitTest;
+                var testCase = lsvTests.FocusedItem.Tag as TestCase;
 
-                var unitTestForm = new UnitTestForm();
-                unitTestForm.ShowUnitTest(unitTest);
+                var testCaseForm = new TestCaseForm();
+                testCaseForm.ShowUnitTest(testCase);
 
             }
         }
@@ -141,7 +162,7 @@ namespace TestRunner
         {
             if (lsvTests.FocusedItem != null)
             {
-                var unitTest = lsvTests.FocusedItem.Tag as UnitTest;
+                var testCase = lsvTests.FocusedItem.Tag as TestCase;
 
                 var variables = new Dictionary<string, string>();
                 variables["SERVER"] = txtServer.Text;
@@ -149,9 +170,8 @@ namespace TestRunner
                 variables["USER"] = txtUser.Text;
                 variables["PASSWORD"] = txtPassword.Text;  
 
-
-                var unitTestForm = new UnitTestForm();
-                unitTestForm.RunUnitTest(unitTest, _OutputFolder, variables);                
+                var testCaseForm = new TestCaseForm();
+                testCaseForm.RunUnitTest(testCase, _OutputFolder, variables);                
             }
         }
 

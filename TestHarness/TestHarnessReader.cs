@@ -8,10 +8,10 @@ using System.IO;
 
 namespace TestHarness
 {
-    public class TestHarnessReader
+    public static class TestHarnessReader
     {
 
-        public TestSuite LoadTestSuite(string fileName)
+        public static TestSuite LoadTestSuite(string fileName)
         {
             var directory = Path.GetDirectoryName(fileName);
 
@@ -21,7 +21,7 @@ namespace TestHarness
             return LoadTestSuite(xml.DocumentElement, directory);        
         }
 
-        public TestSuite LoadTestSuite(XmlNode xml, string directory)
+        public static TestSuite LoadTestSuite(XmlNode xml, string directory)
         {
             var testSuite = new TestSuite();
 
@@ -38,7 +38,7 @@ namespace TestHarness
         }
 
 
-        private ITestItem LoadTestItem(string fileName)
+        private static ITestItem LoadTestItem(string fileName)
         {
             var directory = Path.GetDirectoryName(fileName);
 
@@ -48,7 +48,7 @@ namespace TestHarness
             return LoadTestItem(xml.DocumentElement, directory);
         }
 
-        private ITestItem LoadTestItem(XmlNode xml, string directory)
+        private static ITestItem LoadTestItem(XmlNode xml, string directory)
         {
             if (xml.Name == "testgroup")
             {
@@ -64,7 +64,7 @@ namespace TestHarness
             }
         }
 
-        private TestGroup LoadTestGroup(XmlNode xml, string directory)
+        private static TestGroup LoadTestGroup(XmlNode xml, string directory)
         {
             var testGroup = new TestGroup();
 
@@ -87,7 +87,7 @@ namespace TestHarness
             return testGroup;
         }
 
-        private UnitTest LoadUnitTest(XmlNode xml, string directory)
+        private static UnitTest LoadUnitTest(XmlNode xml, string directory)
         {
             var unitTest = new UnitTest();
 
@@ -132,7 +132,7 @@ namespace TestHarness
             return unitTest;
         }
 
-        private TestCase LoadTestCase(XmlNode xml, string directory)
+        private static TestCase LoadTestCase(XmlNode xml, string directory)
         {
             var testCase = new TestCase();
 
@@ -179,7 +179,7 @@ namespace TestHarness
             return testCase;
         }
 
-        private ITask LoadTask(XmlNode xml, string directory)
+        private static ITask LoadTask(XmlNode xml, string directory)
         {
             if (xml.Name == "mapper")
                 return LoadMapperTask(xml, directory);
@@ -191,7 +191,7 @@ namespace TestHarness
                 return null;
         }
 
-        private MapperTask LoadMapperTask(XmlNode xml, string directory)
+        private static MapperTask LoadMapperTask(XmlNode xml, string directory)
         {
             var mapperTask = new MapperTask();
 
@@ -225,7 +225,7 @@ namespace TestHarness
             return mapperTask;
         }
 
-        private SQLTask LoadSQLTask(XmlNode xml, string directory)
+        private static SQLTask LoadSQLTask(XmlNode xml, string directory)
         {
             var sqlTask = new SQLTask();
 
@@ -245,7 +245,7 @@ namespace TestHarness
             return sqlTask;
         }
 
-        private PayrollExchangeUploadBodTask LoadPayrollExchangeUploadBodTask(XmlNode xml, string directory)
+        private static PayrollExchangeUploadBodTask LoadPayrollExchangeUploadBodTask(XmlNode xml, string directory)
         {
             throw new NotSupportedException();
         }

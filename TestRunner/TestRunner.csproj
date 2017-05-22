@@ -71,11 +71,11 @@
     <Compile Include="SQLResultForm.Designer.cs">
       <DependentUpon>SQLResultForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UnitTestForm.cs">
+    <Compile Include="TestCaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UnitTestForm.Designer.cs">
-      <DependentUpon>UnitTestForm.cs</DependentUpon>
+    <Compile Include="TestCaseForm.Designer.cs">
+      <DependentUpon>TestCaseForm.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -86,8 +86,8 @@
     <EmbeddedResource Include="SQLResultForm.resx">
       <DependentUpon>SQLResultForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UnitTestForm.resx">
-      <DependentUpon>UnitTestForm.cs</DependentUpon>
+    <EmbeddedResource Include="TestCaseForm.resx">
+      <DependentUpon>TestCaseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

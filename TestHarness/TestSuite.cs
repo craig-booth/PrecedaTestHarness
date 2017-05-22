@@ -28,11 +28,10 @@ namespace TestHarness
             Summary = new TestSummary();
         }
 
-
+/*
         public async Task<TestResult> RunTestAsync(TestCase testCase, Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestProgress> progress)
         {
-            throw new NotSupportedException();
-     /*       if (progress != null)
+            if (progress != null)
             {
                 progress.Report(new TestRunProgress()
                 {
@@ -57,8 +56,8 @@ namespace TestHarness
                 });
             } 
             
-            return testResult; */
-        } 
+            return testResult; 
+        } */
 
         public async Task<TestResult> RunAllAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestProgress> progress)
         {

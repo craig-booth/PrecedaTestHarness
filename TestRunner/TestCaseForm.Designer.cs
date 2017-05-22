@@ -1,6 +1,6 @@
 ﻿namespace TestRunner
 {
-    partial class UnitTestForm
+    partial class TestCaseForm
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Setup", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Test", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Tear Down", System.Windows.Forms.HorizontalAlignment.Left);
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UnitTestForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestCaseForm));
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();

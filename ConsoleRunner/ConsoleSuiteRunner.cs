@@ -16,15 +16,13 @@ namespace ConsoleRunner
 
         public void RunTest(string fileName, Dictionary<string, string> variables, string outputFolder)
         {
-            var reader = new TestHarnessReader();
-            var testSuite = reader.LoadTestSuite(fileName);
+            var testSuite = TestHarnessReader.LoadTestSuite(fileName);
             var progress = new Progress<TestProgress>(OnTestRunProgress);
 
             var task = testSuite.RunAllAsync(variables, outputFolder, CancellationToken.None, progress);
             task.Wait();
 
-            var writer = new TestHarnessWriter();
-            writer.SaveTestSuite(testSuite, variables, Path.Combine(outputFolder, "result.xml"));
+            TestHarnessWriter.SaveTestSuite(testSuite, variables, Path.Combine(outputFolder, "result.xml"));
         }
 
 

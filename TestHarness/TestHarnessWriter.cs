@@ -8,24 +8,22 @@ using System.Xml;
 
 namespace TestHarness
 {
-    public class TestHarnessWriter
+    public static class TestHarnessWriter
     {
-        private XmlDocument XmlDocument;
-
-        public void SaveTestSuite(TestSuite testSuite, Dictionary<string, string> variables, string fileName)
+        public static void SaveTestSuite(TestSuite testSuite, Dictionary<string, string> variables, string fileName)
         {
-            SaveTestSuite(testSuite, variables);
-            XmlDocument.Save(fileName);
+            var xmlDocument = SaveTestSuite(testSuite, variables);
+            xmlDocument.Save(fileName);
         }
 
-        public XmlDocument SaveTestSuite(TestSuite testSuite, Dictionary<string, string> variables)
+        public static XmlDocument SaveTestSuite(TestSuite testSuite, Dictionary<string, string> variables)
         {
-            XmlDocument = new XmlDocument();
+            var xmlDocument = new XmlDocument();
 
-            var testRunNode = XmlDocument.CreateElement("testrun");
-            XmlDocument.AppendChild(testRunNode);
+            var testRunNode = xmlDocument.CreateElement("testrun");
+            xmlDocument.AppendChild(testRunNode);
 
-            var summaryNode = XmlDocument.CreateElement("summary");
+            var summaryNode = xmlDocument.CreateElement("summary");
             testRunNode.AppendChild(summaryNode);
 
             OutputValue(summaryNode, "server", variables["SERVER"]);
@@ -39,27 +37,28 @@ namespace TestHarness
             OutputValue(summaryNode, "notrun", testSuite.Summary.NotRun.ToString());
             OutputValue(summaryNode, "total", testSuite.Summary.Total.ToString());
 
-            var resultsNode = XmlDocument.CreateElement("results");
+            var resultsNode = xmlDocument.CreateElement("results");
             testRunNode.AppendChild(resultsNode);
 
-            resultsNode.AppendChild(SaveTestItem(testSuite.Test));
+            SaveTestItem(resultsNode, testSuite.Test);
 
-            return XmlDocument;
+            return xmlDocument;
         }
 
-        private XmlElement SaveTestItem(ITestItem testItem)
+        private static void SaveTestItem(XmlElement xml, ITestItem testItem)
         {
             if (testItem is TestGroup)
-                return SaveTestGroup(testItem as TestGroup);
+                SaveTestGroup(xml, testItem as TestGroup);
             else if (testItem is UnitTest)
-                return SaveUnitTest(testItem as UnitTest);
+                SaveUnitTest(xml, testItem as UnitTest);
             else
                 throw new NotSupportedException();
         }
 
-        private XmlElement SaveTestGroup(TestGroup testGroup)
+        private static void SaveTestGroup(XmlElement xml, TestGroup testGroup)
         {            
-            var testGroupNode = XmlDocument.CreateElement("testgroup");
+            var testGroupNode = xml.OwnerDocument.CreateElement("testgroup");
+            xml.AppendChild(testGroupNode);
 
             OutputValue(testGroupNode, "id", testGroup.Id.ToString());
             OutputValue(testGroupNode, "name", testGroup.Name);
@@ -72,20 +71,19 @@ namespace TestHarness
             OutputValue(testGroupNode, "notrun", testGroup.Summary.NotRun.ToString());
             OutputValue(testGroupNode, "total", testGroup.Summary.Total.ToString());
 
-            var resultsNode = XmlDocument.CreateElement("results");
+            var resultsNode = xml.OwnerDocument.CreateElement("results");
             testGroupNode.AppendChild(resultsNode);
 
             foreach (var testItem in testGroup.Items)
             {
-                resultsNode.AppendChild(SaveTestItem(testItem));
+                SaveTestItem(resultsNode, testItem);
             }
-
-            return testGroupNode;
         }
 
-        private XmlElement SaveUnitTest(UnitTest unitTest)
+        private static void SaveUnitTest(XmlElement xml, UnitTest unitTest)
         {
-            var unitTestNode = XmlDocument.CreateElement("unittest");
+            var unitTestNode = xml.OwnerDocument.CreateElement("unittest");
+            xml.AppendChild(unitTestNode);
 
             OutputValue(unitTestNode, "id", unitTest.Id.ToString());
             OutputValue(unitTestNode, "name", unitTest.Name);
@@ -98,20 +96,19 @@ namespace TestHarness
             OutputValue(unitTestNode, "notrun", unitTest.Summary.NotRun.ToString());
             OutputValue(unitTestNode, "total", unitTest.Summary.Total.ToString());
 
-            var resultsNode = XmlDocument.CreateElement("results");
+            var resultsNode = xml.OwnerDocument.CreateElement("results");
             unitTestNode.AppendChild(resultsNode);
 
             foreach (var testCase in unitTest.TestCases)
             {
-                resultsNode.AppendChild(SaveTestCase(testCase));
+                SaveTestCase(resultsNode, testCase);
             }
-
-            return unitTestNode;
         }
 
-        private XmlElement SaveTestCase(TestCase testCase)
+        private static void SaveTestCase(XmlElement xml, TestCase testCase)
         {
-            var testCaseNode = XmlDocument.CreateElement("testcase");
+            var testCaseNode = xml.OwnerDocument.CreateElement("testcase");
+            xml.AppendChild(testCaseNode);
 
             OutputValue(testCaseNode, "id", testCase.Id.ToString());
             OutputValue(testCaseNode, "name", testCase.Name);
@@ -120,13 +117,11 @@ namespace TestHarness
             OutputValue(testCaseNode, "start", testCase.StartTime.ToString());
             OutputValue(testCaseNode, "end", testCase.StartTime.ToString());
             OutputValue(testCaseNode, "result", testCase.Result.ToString());
-
-            return testCaseNode;
         } 
 
-        private void OutputValue(XmlElement xml, string name, string value)
+        private static void OutputValue(XmlElement xml, string name, string value)
         {
-            var node = XmlDocument.CreateElement(name);
+            var node = xml.OwnerDocument.CreateElement(name);
             node.InnerText = value;
             xml.AppendChild(node);
         }
