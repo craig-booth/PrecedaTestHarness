@@ -22,5 +22,7 @@ namespace TestHarness
         int TestCount { get; }
 
         Task<TestResult> RunAsync(Dictionary<string, string> variables, string outputFolder, CancellationToken cancellationToken, IProgress<TestProgress> progress);
+
+        TestCase GetTestCase(Guid id);
     }
 }

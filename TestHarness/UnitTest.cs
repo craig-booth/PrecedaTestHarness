@@ -137,6 +137,11 @@ namespace TestHarness
             EndTime = DateTime.Now;
             return Result;
             
-        } 
+        }
+
+        public TestCase GetTestCase(Guid id)
+        {
+            return TestCases.FirstOrDefault(x => x.Id == id);
+        }
     }
 }

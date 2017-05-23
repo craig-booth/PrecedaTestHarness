@@ -79,5 +79,16 @@ namespace TestHarness
             return Result;
         } 
 
+        public TestCase GetTestCase(Guid id)
+        {
+            foreach (var testItem in Items)
+            {
+                var testCase = testItem.GetTestCase(id);
+                if (testCase != null)
+                    return testCase;
+            }
+
+            return null;
+        }
     }
 }
