@@ -33,7 +33,7 @@ namespace TestHarness
             OutputValue(summaryNode, "start", testSuite.StartTime.ToString());
             OutputValue(summaryNode, "end", testSuite.EndTime.ToString());
             OutputValue(summaryNode, "passed", testSuite.Summary.Passed.ToString());
-            OutputValue(summaryNode, "failed", testSuite.Summary.Failed.ToString());
+            OutputValue(summaryNode, "failed", (testSuite.Summary.Failed + testSuite.Summary.SetupFailed).ToString());
             OutputValue(summaryNode, "notrun", testSuite.Summary.NotRun.ToString());
             OutputValue(summaryNode, "total", testSuite.Summary.Total.ToString());
 
@@ -67,7 +67,7 @@ namespace TestHarness
             OutputValue(testGroupNode, "start", testGroup.StartTime.ToString());
             OutputValue(testGroupNode, "end", testGroup.EndTime.ToString());
             OutputValue(testGroupNode, "passed", testGroup.Summary.Passed.ToString());
-            OutputValue(testGroupNode, "failed", testGroup.Summary.Failed.ToString());
+            OutputValue(testGroupNode, "failed", (testGroup.Summary.Failed + testGroup.Summary.SetupFailed).ToString());
             OutputValue(testGroupNode, "notrun", testGroup.Summary.NotRun.ToString());
             OutputValue(testGroupNode, "total", testGroup.Summary.Total.ToString());
 
@@ -92,7 +92,7 @@ namespace TestHarness
             OutputValue(unitTestNode, "start", unitTest.StartTime.ToString());
             OutputValue(unitTestNode, "end", unitTest.EndTime.ToString());
             OutputValue(unitTestNode, "passed", unitTest.Summary.Passed.ToString());
-            OutputValue(unitTestNode, "failed", unitTest.Summary.Failed.ToString());
+            OutputValue(unitTestNode, "failed", (unitTest.Summary.Failed + unitTest.Summary.SetupFailed).ToString());
             OutputValue(unitTestNode, "notrun", unitTest.Summary.NotRun.ToString());
             OutputValue(unitTestNode, "total", unitTest.Summary.Total.ToString());
 
