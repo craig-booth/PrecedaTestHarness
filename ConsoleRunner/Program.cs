@@ -17,7 +17,7 @@ namespace ConsoleRunner
 
         /* Usage 
          * 
-         *  ConsoleRunner {testfile} -server={server} -filelibrary={filelibrary} -user={user} -password={password} 
+         *  ConsoleRunner {testfile} -outdir={output directory} -server={server} -filelibrary={filelibrary} -user={user} -password={password} 
          * 
          */
 
@@ -26,20 +26,28 @@ namespace ConsoleRunner
             var testFile = args[0];
             var variables = ParseCommandLineParameters(args.Skip(1));
 
-            var outputFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PrecedaTestHarness");
-            Directory.CreateDirectory(outputFolder);
-        
-            var testRunOutputFolder = Path.Combine(outputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-            Directory.CreateDirectory(testRunOutputFolder);
+            string outputDirectory;
+            if (variables.ContainsKey("outdir"))
+            {
+                outputDirectory = variables["outdir"];
+            }
+            else
+            {
+                outputDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PrecedaTestHarness");
+                Directory.CreateDirectory(outputDirectory);
+            }
 
+            outputDirectory = Path.Combine(outputDirectory, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+            Directory.CreateDirectory(outputDirectory);
+            variables["outdir"] = outputDirectory;
 
             var consoleSuiteRunner = new ConsoleSuiteRunner();
 
-            consoleSuiteRunner.RunTest(testFile, variables, testRunOutputFolder);
+            consoleSuiteRunner.RunTest(testFile, variables, outputDirectory);
 
             var transform = new XslCompiledTransform();
             transform.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Report.xsl"));
-            transform.Transform(Path.Combine(testRunOutputFolder, "result.xml"), Path.Combine(testRunOutputFolder, "result.html"));
+            transform.Transform(Path.Combine(outputDirectory, "result.xml"), Path.Combine(outputDirectory, "result.html"));
         }
 
         private static Dictionary<string, string> ParseCommandLineParameters(IEnumerable<string> args)
