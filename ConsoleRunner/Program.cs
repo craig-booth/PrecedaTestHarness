@@ -27,9 +27,9 @@ namespace ConsoleRunner
             var variables = ParseCommandLineParameters(args.Skip(1));
 
             string outputDirectory;
-            if (variables.ContainsKey("outdir"))
+            if (variables.ContainsKey("OUTDIR"))
             {
-                outputDirectory = variables["outdir"];
+                outputDirectory = variables["OUTDIR"];
             }
             else
             {
@@ -39,7 +39,7 @@ namespace ConsoleRunner
 
             outputDirectory = Path.Combine(outputDirectory, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
             Directory.CreateDirectory(outputDirectory);
-            variables["outdir"] = outputDirectory;
+            variables["OUTDIR"] = outputDirectory;
 
             var consoleSuiteRunner = new ConsoleSuiteRunner();
 
