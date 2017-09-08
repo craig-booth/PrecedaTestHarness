@@ -62,13 +62,14 @@ namespace Mapper
             requestContent.Add(new StringContent(Password), "PASSWORD");
             requestContent.Add(new StringContent(FileLibrary), "DATABASE");
             requestContent.Add(new StringContent("UNITTEST"), "SERVICE");
+            requestContent.Add(new StringContent("MAPPER"), "TASKTYPE");
             requestContent.Add(new StringContent(importName), "IMPORT");
 
             var fileStream = File.OpenRead(fileName);
             requestContent.Add(new StreamContent(fileStream), "FILE", fileName);            
 
             var httpClient = new HttpClient();     
-            var httpResponce = await httpClient.PostAsync("https://" + Server + "/cgi-bin/precedawebservice", requestContent, cancellationToken);
+            var httpResponce = await httpClient.PostAsync("http://" + Server + "/cgi-bin/precedawebservice", requestContent, cancellationToken);
 
             fileStream.Close();
 

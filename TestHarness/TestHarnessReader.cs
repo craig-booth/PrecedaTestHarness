@@ -146,6 +146,12 @@ namespace TestHarness
             if (node != null)
                 testCase.Description = node.InnerText;
 
+            node = xml.SelectSingleNode("testtype");
+            if (node != null)
+            {
+                if (node.InnerText == "negative")
+                    testCase.TestType = TestType.Negative;
+            }
 
             node = xml.SelectSingleNode("setup");
             if (node != null)
@@ -187,6 +193,8 @@ namespace TestHarness
                 return LoadSQLTask(xml, directory);
             else if (xml.Name == "uploadbod")
                 return LoadPayrollExchangeUploadBodTask(xml, directory);
+            else if (xml.Name == "xmltransform")
+                return LoadXmlTransformTask(xml, directory);
             else
                 return null;
         }
@@ -249,7 +257,50 @@ namespace TestHarness
         {
             throw new NotSupportedException();
         }
-        
+
+        private static XmlTransformTask LoadXmlTransformTask(XmlNode xml, string directory)
+        {
+            var transformTask = new XmlTransformTask();
+
+            transformTask.TransformName = xml.SelectSingleNode("transform").InnerText;
+            transformTask.FileName = Path.Combine(directory, xml.SelectSingleNode("file").InnerText);
+
+            transformTask.ActualResult = null;
+
+            var successfull = true;
+            var errorMessage = "";
+            var resultFile = "";
+
+            var expectedResultNode = xml.SelectSingleNode("expectedresult");
+            if (expectedResultNode != null)
+            {
+                var expectedError = expectedResultNode.SelectSingleNode("error");
+                if (expectedError != null)
+                {
+                    successfull = false;
+                    errorMessage = expectedError.InnerText;
+                }
+                else
+                {
+                    var result = expectedResultNode.SelectSingleNode("result");
+                    if (result != null)
+                    {
+                        successfull = true;
+                        resultFile = Path.Combine(directory, result.Attributes["file"].InnerText);
+                    }
+                }
+
+            }
+
+            transformTask.ExpectedResult = new XmlTransformTaskResult()
+            {
+                Successfull = successfull,
+                Error = errorMessage,
+                ResultFile = resultFile
+            };
+
+            return transformTask;
+        }
 
 
     }

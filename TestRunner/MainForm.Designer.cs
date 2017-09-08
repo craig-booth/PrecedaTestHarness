@@ -133,7 +133,7 @@
             this.txtUser.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtUser.Location = new System.Drawing.Point(73, 39);
             this.txtUser.Name = "txtUser";
-            this.txtUser.Size = new System.Drawing.Size(100, 20);
+            this.txtUser.Size = new System.Drawing.Size(140, 20);
             this.txtUser.TabIndex = 3;
             // 
             // txtPassword
@@ -142,7 +142,7 @@
             this.txtPassword.Location = new System.Drawing.Point(283, 38);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
-            this.txtPassword.Size = new System.Drawing.Size(100, 20);
+            this.txtPassword.Size = new System.Drawing.Size(134, 20);
             this.txtPassword.TabIndex = 4;
             // 
             // txtServer
@@ -150,7 +150,7 @@
             this.txtServer.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtServer.Location = new System.Drawing.Point(73, 13);
             this.txtServer.Name = "txtServer";
-            this.txtServer.Size = new System.Drawing.Size(100, 20);
+            this.txtServer.Size = new System.Drawing.Size(140, 20);
             this.txtServer.TabIndex = 1;
             this.txtServer.Text = "DEV3";
             // 
@@ -159,7 +159,7 @@
             this.txtFileLibrary.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
             this.txtFileLibrary.Location = new System.Drawing.Point(283, 13);
             this.txtFileLibrary.Name = "txtFileLibrary";
-            this.txtFileLibrary.Size = new System.Drawing.Size(100, 20);
+            this.txtFileLibrary.Size = new System.Drawing.Size(134, 20);
             this.txtFileLibrary.TabIndex = 2;
             // 
             // label1

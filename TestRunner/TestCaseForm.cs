@@ -165,6 +165,14 @@ namespace TestRunner
                         resultForm.ShowDialog();
                     }
                 }
+                else if (task is XmlTransformTask)
+                {
+                   var transformTask = task as XmlTransformTask;
+
+                   var resultForm = new XmlTransformResultForm(_TestCase, transformTask);
+                   resultForm.ShowDialog();
+                  
+                }
 
             }
         }
