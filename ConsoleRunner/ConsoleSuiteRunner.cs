@@ -7,6 +7,7 @@ using System.Threading;
 using System.IO;
 
 using TestHarness;
+using TestHarness.IO;
 
 namespace ConsoleRunner
 {
@@ -18,8 +19,8 @@ namespace ConsoleRunner
 
         public void RunTest(string fileName, Dictionary<string, string> variables, string outputFolder)
         {
-            _TestSuite = TestHarnessReader.LoadTestSuite(fileName);
-
+            var suiteLoader = new XmlTestSuiteLoader();
+            _TestSuite = suiteLoader.Load(fileName);
             Console.Clear();
             Console.WriteLine("Test started.");
 
@@ -31,7 +32,8 @@ namespace ConsoleRunner
             var task = _TestSuite.RunAllAsync(variables, outputFolder, CancellationToken.None, progress);
             task.Wait();
 
-            TestHarnessWriter.SaveTestSuite(_TestSuite, variables, Path.Combine(outputFolder, "result.xml"));
+            var resultWriter = new JUnitTestResultWriter();
+            resultWriter.WriteResults(_TestSuite, variables, Path.Combine(outputFolder, "result.xml"));
 
             Console.WriteLine("");
             Console.WriteLine("Test complete. Result saved to outputFolder");

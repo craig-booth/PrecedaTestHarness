@@ -70,6 +70,8 @@ namespace TestHarness
                 if (!testSuccessful)
                 {
                     Result = TestResult.SetupFailed;
+                    EndTime = DateTime.Now;
+
                     return Result;
                 }
             } 

@@ -13,6 +13,7 @@ using System.IO;
 using CsvHelper;
 
 using TestHarness;
+using TestHarness.IO;
 
 namespace TestRunner
 {
@@ -20,6 +21,7 @@ namespace TestRunner
     {
         private CancellationTokenSource _CancellationTokenSource;
         private TestSuite _TestSuite;
+        private Dictionary<string, string> _Variables;
 
         private string _OutputFolder;
 
@@ -27,6 +29,7 @@ namespace TestRunner
         {
             InitializeComponent();
 
+            _Variables = new Dictionary<string, string>();
             _OutputFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PrecedaTestHarness");
             Directory.CreateDirectory(_OutputFolder);
         }
@@ -38,7 +41,8 @@ namespace TestRunner
             var dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                _TestSuite = TestHarnessReader.LoadTestSuite(dialog.FileName);
+                var suiteLoader = new XmlTestSuiteLoader();
+                _TestSuite = suiteLoader.Load(dialog.FileName);
 
                 lsvTests.Items.Clear();
                 DisplayTestItem(_TestSuite.Test);
@@ -91,12 +95,11 @@ namespace TestRunner
 
             foreach (ListViewItem item in lsvTests.Items)
                 item.SubItems[3].Text = "";
-
-            var variables = new Dictionary<string, string>();            
-            variables["SERVER"] = txtServer.Text;
-            variables["FILELIBRARY"] = txtFileLibrary.Text;
-            variables["USER"] = txtUser.Text;
-            variables["PASSWORD"] = txtPassword.Text;           
+           
+            _Variables["SERVER"] = txtServer.Text;
+            _Variables["FILELIBRARY"] = txtFileLibrary.Text;
+            _Variables["USER"] = txtUser.Text;
+            _Variables["PASSWORD"] = txtPassword.Text;           
 
             try
             {
@@ -106,7 +109,7 @@ namespace TestRunner
                 var testRunOutputFolder = Path.Combine(_OutputFolder, DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
                 Directory.CreateDirectory(testRunOutputFolder);
 
-                var result = await _TestSuite.RunAllAsync(variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
+                var result = await _TestSuite.RunAllAsync(_Variables, testRunOutputFolder, _CancellationTokenSource.Token, progress);
             }
             catch (OperationCanceledException)
             {
@@ -164,14 +167,13 @@ namespace TestRunner
             {
                 var testCase = lsvTests.FocusedItem.Tag as TestCase;
 
-                var variables = new Dictionary<string, string>();
-                variables["SERVER"] = txtServer.Text;
-                variables["FILELIBRARY"] = txtFileLibrary.Text;
-                variables["USER"] = txtUser.Text;
-                variables["PASSWORD"] = txtPassword.Text;  
+                _Variables["SERVER"] = txtServer.Text;
+                _Variables["FILELIBRARY"] = txtFileLibrary.Text;
+                _Variables["USER"] = txtUser.Text;
+                _Variables["PASSWORD"] = txtPassword.Text;  
 
                 var testCaseForm = new TestCaseForm();
-                testCaseForm.RunUnitTest(testCase, _OutputFolder, variables);                
+                testCaseForm.RunUnitTest(testCase, _OutputFolder, _Variables);                
             }
         }
 
@@ -185,50 +187,13 @@ namespace TestRunner
 
         private void btnSaveOutput_Click(object sender, EventArgs e)
         {
-    /*        var dialog = new SaveFileDialog();
-            dialog.DefaultExt = ".csv";
+            var dialog = new SaveFileDialog();
+            dialog.DefaultExt = ".xml";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var streamWriter = new StreamWriter(dialog.FileName , false);
-                var csvWriter = new CsvWriter(streamWriter);
-
-                csvWriter.WriteHeader<TestOutputRecord>();
-                foreach(var unitTest in _TestSuite.UnitTests)
-                {
-                    var outputRecord = new TestOutputRecord();
-
-                    outputRecord.Test = unitTest.Name;
-                    outputRecord.Description = unitTest.Description;
-                    outputRecord.Type = unitTest.TestType.ToString();
-                    outputRecord.Result = unitTest.Result.ToString();
-
-                    PayrollExchangeUploadBodTask task;
-                    if (unitTest.Result == TestResult.SetupFailed) 
-                        task = unitTest.SetupTasks[0] as PayrollExchangeUploadBodTask;
-                    else
-                        task = unitTest.TestTasks[0] as PayrollExchangeUploadBodTask;
-
-                    outputRecord.BodId = task.BodId;
-                    outputRecord.PrecedaId = task.PrecedaId;
-                    outputRecord.ExpectedStage = task.ExpectedResult.ProcessingStage;
-                    outputRecord.ExpectedStatus = task.ExpectedResult.Status;
-                    if (task.ActualResult != null)
-                    {
-                        outputRecord.ActualStage = task.ActualResult.ProcessingStage;
-                        outputRecord.ActualStatus = task.ActualResult.Status;
-                    }
-                    else
-                    {
-                        outputRecord.ActualStage = "";
-                        outputRecord.ActualStatus = "";
-                    }
-
-
-                    csvWriter.WriteRecord(outputRecord);
-                }
-
-                streamWriter.Close();
-            }      */  
+                var resultWriter = new JUnitTestResultWriter();
+                resultWriter.WriteResults(_TestSuite, _Variables, dialog.FileName);
+            }       
         }
 
         private void btnRunSelected_Click(object sender, EventArgs e)

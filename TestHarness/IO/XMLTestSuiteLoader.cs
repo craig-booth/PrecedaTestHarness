@@ -3,42 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 using System.IO;
+using System.Xml;
 
-namespace TestHarness
+namespace TestHarness.IO
 {
-    public static class TestHarnessReader
+    public class XmlTestSuiteLoader : ITestSuiteLoader
     {
-
-        public static TestSuite LoadTestSuite(string fileName)
-        {
-            var directory = Path.GetDirectoryName(fileName);
-
-            var xml = new XmlDocument();
-            xml.Load(fileName);
-
-            return LoadTestSuite(xml.DocumentElement, directory);        
-        }
-
-        public static TestSuite LoadTestSuite(XmlNode xml, string directory)
+        public TestSuite Load(string fileName)
         {
             var testSuite = new TestSuite();
 
-            if (xml.Name == "testgroup")
-            {
-                 testSuite.Test = LoadTestGroup(xml, directory);
-            }
-            else if (xml.Name == "unittest")
-            {
-                testSuite.Test = LoadUnitTest(xml, directory);
-            }
+            testSuite.Test = LoadTestItem(fileName);
 
             return testSuite;
         }
 
+        public void Save(TestSuite testSuite, string fileName)
+        {
+            throw new NotImplementedException();
+        }
 
-        private static ITestItem LoadTestItem(string fileName)
+        private ITestItem LoadTestItem(string fileName)
         {
             var directory = Path.GetDirectoryName(fileName);
 
@@ -48,7 +34,7 @@ namespace TestHarness
             return LoadTestItem(xml.DocumentElement, directory);
         }
 
-        private static ITestItem LoadTestItem(XmlNode xml, string directory)
+        private ITestItem LoadTestItem(XmlNode xml, string directory)
         {
             if (xml.Name == "testgroup")
             {
@@ -62,9 +48,9 @@ namespace TestHarness
             {
                 throw new NotSupportedException();
             }
-        }
+        } 
 
-        private static TestGroup LoadTestGroup(XmlNode xml, string directory)
+        private TestGroup LoadTestGroup(XmlNode xml, string directory)
         {
             var testGroup = new TestGroup();
 
@@ -81,13 +67,13 @@ namespace TestHarness
                     else
                         testGroup.Items.Add(LoadTestItem(node, directory));
                 }
-                
-            }
-        
-            return testGroup;
-        }
 
-        private static UnitTest LoadUnitTest(XmlNode xml, string directory)
+            }
+
+            return testGroup;
+        } 
+
+        private UnitTest LoadUnitTest(XmlNode xml, string directory)
         {
             var unitTest = new UnitTest();
 
@@ -130,9 +116,9 @@ namespace TestHarness
             }
 
             return unitTest;
-        }
+        } 
 
-        private static TestCase LoadTestCase(XmlNode xml, string directory)
+        private TestCase LoadTestCase(XmlNode xml, string directory)
         {
             var testCase = new TestCase();
 
@@ -183,9 +169,9 @@ namespace TestHarness
             }
 
             return testCase;
-        }
+        } 
 
-        private static ITask LoadTask(XmlNode xml, string directory)
+        private ITask LoadTask(XmlNode xml, string directory)
         {
             if (xml.Name == "mapper")
                 return LoadMapperTask(xml, directory);
@@ -197,9 +183,9 @@ namespace TestHarness
                 return LoadXmlTransformTask(xml, directory);
             else
                 return null;
-        }
+        } 
 
-        private static MapperTask LoadMapperTask(XmlNode xml, string directory)
+        private MapperTask LoadMapperTask(XmlNode xml, string directory)
         {
             var mapperTask = new MapperTask();
 
@@ -228,12 +214,12 @@ namespace TestHarness
             if (expectedErrors != null)
                 errorFile = Path.Combine(directory, expectedErrors.Attributes["file"].InnerText);
 
-            mapperTask.ExpectedResult = new MapperTaskResult(recordsAdded, recordsUpdated, recordsDeleted, recordsFailed, recordsTotal, errorFile); 
+            mapperTask.ExpectedResult = new MapperTaskResult(recordsAdded, recordsUpdated, recordsDeleted, recordsFailed, recordsTotal, errorFile);
 
             return mapperTask;
-        }
+        } 
 
-        private static SQLTask LoadSQLTask(XmlNode xml, string directory)
+        private SQLTask LoadSQLTask(XmlNode xml, string directory)
         {
             var sqlTask = new SQLTask();
 
@@ -248,17 +234,17 @@ namespace TestHarness
                     sqlTask.RunMode = SQLRunMode.Query;
                     sqlTask.ExpectedResult.DataFileName = Path.Combine(directory, dataNode.Attributes["file"].Value);
                 }
-            } 
+            }
 
             return sqlTask;
-        }
-
-        private static PayrollExchangeUploadBodTask LoadPayrollExchangeUploadBodTask(XmlNode xml, string directory)
+        } 
+        
+        private PayrollExchangeUploadBodTask LoadPayrollExchangeUploadBodTask(XmlNode xml, string directory)
         {
             throw new NotSupportedException();
-        }
+        } 
 
-        private static XmlTransformTask LoadXmlTransformTask(XmlNode xml, string directory)
+        private XmlTransformTask LoadXmlTransformTask(XmlNode xml, string directory)
         {
             var transformTask = new XmlTransformTask();
 
@@ -301,7 +287,6 @@ namespace TestHarness
 
             return transformTask;
         }
-
 
     }
 }
