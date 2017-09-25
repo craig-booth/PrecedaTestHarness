@@ -90,6 +90,8 @@ namespace XmlTransform
             }
             else
             {
+                result.Successfull = true;
+                result.Error = "";
                 result.ResultFile = resultFileName;
                 var resultFile = File.CreateText(result.ResultFile);
 
