@@ -56,7 +56,7 @@ namespace TestRunner
         private void btnViewActualResult_Click(object sender, EventArgs e)
         {
             ProcessStartInfo notePad = new ProcessStartInfo();
-            notePad.Arguments = Task.ExpectedResult.ResultFile;
+            notePad.Arguments = Task.ActualResult.ResultFile;
             notePad.FileName = Path.Combine(Environment.GetEnvironmentVariable("windir"), "system32", "notepad.exe");
             notePad.WindowStyle = ProcessWindowStyle.Normal;
 
