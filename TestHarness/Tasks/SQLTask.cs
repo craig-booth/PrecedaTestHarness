@@ -211,6 +211,8 @@ namespace TestHarness
 
         public async Task<bool> RunQuery(string sql, string outputFile)
         {
+            var csvFile = File.CreateText(outputFile);
+
             var connection = new OleDbConnection(_ConnectionString);
             await connection.OpenAsync();
 
@@ -219,26 +221,28 @@ namespace TestHarness
             OleDbCommand command = new OleDbCommand(sql, connection);
             var reader = await command.ExecuteReaderAsync();
 
-            var csvFile = File.CreateText(outputFile);
-
             var csvWriter = new CsvWriter(csvFile);
 
-            // Write out header
-            for (var i = 0; i < reader.FieldCount; i++)
-                csvWriter.WriteField(reader.GetName(i));
-            csvWriter.NextRecord();
-
-            while (await reader.ReadAsync())
+            if (reader.FieldCount == 0)
+                csvFile.WriteLine("Query did not return any fields");
+            else
             {
+                // Write out header
                 for (var i = 0; i < reader.FieldCount; i++)
-                    csvWriter.WriteField(reader.GetValue(i));
-
+                    csvWriter.WriteField(reader.GetName(i));
                 csvWriter.NextRecord();
+
+                while (await reader.ReadAsync())
+                {
+                    for (var i = 0; i < reader.FieldCount; i++)
+                        csvWriter.WriteField(reader.GetValue(i));
+
+                    csvWriter.NextRecord();
+                }
             }
-
-            csvFile.Close();
-
+               
             connection.Close();
+            csvFile.Close();
 
             return true;                      
         }

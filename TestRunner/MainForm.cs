@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,6 +29,9 @@ namespace TestRunner
         public MainForm()
         {
             InitializeComponent();
+
+            //specify to use TLS 1.2 as default connection
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
             _Variables = new Dictionary<string, string>();
             _OutputFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PrecedaTestHarness");

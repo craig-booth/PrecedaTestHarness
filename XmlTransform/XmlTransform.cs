@@ -51,7 +51,7 @@ namespace XmlTransform
             requestContent.Add(new StreamContent(fileStream), "FILE", fileName);
 
             var httpClient = new HttpClient();
-            var httpResponce = await httpClient.PostAsync("http://" + Server + "/cgi-bin/precedawebservice", requestContent, cancellationToken);
+            var httpResponce = await httpClient.PostAsync("https://" + Server + "/cgi-bin/precedawebservice", requestContent, cancellationToken);
 
             fileStream.Close();
 

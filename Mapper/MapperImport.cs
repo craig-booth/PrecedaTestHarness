@@ -68,6 +68,7 @@ namespace Mapper
             var fileStream = File.OpenRead(fileName);
             requestContent.Add(new StreamContent(fileStream), "FILE", fileName);
 
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             System.Net.ServicePointManager.CertificatePolicy = new IgnoreInvalidSSLCertificatePolicy();
 
             var httpClient = new HttpClient();    

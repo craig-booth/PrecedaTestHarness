@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PayrollExchange</RootNamespace>
     <AssemblyName>PayrollExchange</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -56,7 +56,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\WebService\InboundXMLRequestService.wsdl" />
     <None Include="Service References\WebService\PayrollExchange.WebService.requestResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -69,7 +71,9 @@
     <None Include="Service References\WebService\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Service References\WebService\configuration.svcinfo" />
+    <None Include="Service References\WebService\configuration.svcinfo">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\WebService\Reference.svcmap">
