@@ -10,6 +10,7 @@ using System.Net;
 using System.Xml;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Cryptography.X509Certificates;
 
 namespace XmlTransform
 {
@@ -49,6 +50,9 @@ namespace XmlTransform
 
             var fileStream = File.OpenRead(fileName);
             requestContent.Add(new StreamContent(fileStream), "FILE", fileName);
+
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+            System.Net.ServicePointManager.CertificatePolicy = new IgnoreInvalidSSLCertificatePolicy();
 
             var httpClient = new HttpClient();
             var httpResponce = await httpClient.PostAsync("https://" + Server + "/cgi-bin/precedawebservice", requestContent, cancellationToken);
@@ -112,5 +116,13 @@ namespace XmlTransform
         }
     }
 
+    public class IgnoreInvalidSSLCertificatePolicy : ICertificatePolicy
+    {
+        public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem)
+        {
+            //Return True to force the certificate to be accepted.
+            return true;
+        }
+    }
 
 }
